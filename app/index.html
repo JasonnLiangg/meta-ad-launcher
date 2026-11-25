@@ -1,0 +1,1652 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ad Launcher</title>
+<script>try{var t=localStorage.getItem('adl-theme');if(t==='light'||t==='dark')document.documentElement.dataset.theme=t}catch(e){}</script>
+<style>
+:root{color-scheme:light;--bg:#eef0fb;--card:#fff;--field:#fff;--ink:#1d2433;--muted:#6b7385;--line:#e3e6f0;--blue:#2856e6;--blue-soft:#e9efff;--blue-line:#cfdbff;--set-bg:#f6f8ff;--soft:#fafbff;--drop-line:#b9c3e6;--green:#1f9d55;--green-soft:#e3f6ea;--green-line:#bfe6cd;--green-ink:#14653a;--red:#d64545;--red-soft:#fdecec;--red-line:#f3c9c9;--red-ink:#9b1c1c;--warn-soft:#fff6e5;--warn-line:#f2d39b;--warn-ink:#7a5200;--warn-strong:#5c3d00;--orange-soft:#fff1e6;--orange-ink:#9a3d00;--chip:#f3f5fb;--on-ink:#fff;--shadow:rgba(20,30,70,.12);--shadow-lg:rgba(20,30,70,.25);--backdrop:rgba(20,26,45,.35)}
+@media (prefers-color-scheme:dark){:root:not([data-theme=light]){color-scheme:dark;--bg:#0f131c;--card:#171c27;--field:#1d2330;--ink:#e6e9f2;--muted:#9aa2b5;--line:#2c3342;--blue:#5b82ff;--blue-soft:#1d2a4d;--blue-line:#34477a;--set-bg:#141b2c;--soft:#1a2030;--drop-line:#3a4560;--green:#3fc27a;--green-soft:#15301f;--green-line:#245a3a;--green-ink:#7fdca6;--red:#ef6a6a;--red-soft:#3a1a1c;--red-line:#6a2c2f;--red-ink:#ffaaaa;--warn-soft:#332811;--warn-line:#5e4a1f;--warn-ink:#f0c76a;--warn-strong:#ffd98a;--orange-soft:#38220f;--orange-ink:#ffb27a;--chip:#222937;--on-ink:#0f131c;--shadow:rgba(0,0,0,.4);--shadow-lg:rgba(0,0,0,.6);--backdrop:rgba(0,0,0,.55)}}
+:root[data-theme=dark]{color-scheme:dark;--bg:#0f131c;--card:#171c27;--field:#1d2330;--ink:#e6e9f2;--muted:#9aa2b5;--line:#2c3342;--blue:#5b82ff;--blue-soft:#1d2a4d;--blue-line:#34477a;--set-bg:#141b2c;--soft:#1a2030;--drop-line:#3a4560;--green:#3fc27a;--green-soft:#15301f;--green-line:#245a3a;--green-ink:#7fdca6;--red:#ef6a6a;--red-soft:#3a1a1c;--red-line:#6a2c2f;--red-ink:#ffaaaa;--warn-soft:#332811;--warn-line:#5e4a1f;--warn-ink:#f0c76a;--warn-strong:#ffd98a;--orange-soft:#38220f;--orange-ink:#ffb27a;--chip:#222937;--on-ink:#0f131c;--shadow:rgba(0,0,0,.4);--shadow-lg:rgba(0,0,0,.6);--backdrop:rgba(0,0,0,.55)}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{margin:0;font:14px/1.45 -apple-system,BlinkMacSystemFont,"Inter","Segoe UI",sans-serif;background:var(--bg);color:var(--ink)}
+header{display:flex;align-items:center;gap:12px;padding:14px 24px;background:var(--card);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:5}
+header h1{font-size:16px;margin:0}
+.badge{background:var(--chip);border:1px solid var(--line);border-radius:999px;padding:2px 10px;font-size:12px;color:var(--muted)}
+header .sp{flex:1}
+main{display:grid;grid-template-columns:420px 1fr;gap:16px;padding:16px 24px;align-items:start}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px;margin-bottom:16px}
+h2{font-size:15px;margin:0 0 12px}h3{font-size:13px;margin:14px 0 6px;color:var(--muted);font-weight:600}
+label{display:block;font-size:12px;color:var(--muted);margin:10px 0 0}
+input,select,textarea{width:100%;font:inherit;color:inherit;border:1px solid var(--line);border-radius:9px;padding:8px 10px;background:var(--field);margin-top:4px}
+textarea{resize:vertical;min-height:84px}
+input:focus,select:focus,textarea:focus{outline:2px solid var(--blue-soft);border-color:var(--blue)}
+.row{display:flex;gap:8px;align-items:flex-end}.row>*{flex:1}
+button{font:inherit;color:inherit;border:1px solid var(--line);background:var(--field);border-radius:9px;padding:8px 12px;cursor:pointer;white-space:nowrap}
+button:hover{background:var(--chip)}button:disabled{opacity:.5;cursor:default}
+button.primary{background:var(--blue);border-color:var(--blue);color:#fff}button.primary:hover{filter:brightness(1.07)}
+button.icon{padding:5px 8px;font-size:13px}
+.add{width:100%;margin-top:6px;border-style:dashed;color:var(--muted)}
+.hint{font-size:12px;color:var(--muted);margin:6px 0 0}
+.drop{margin-top:10px;border:1.5px dashed var(--drop-line);border-radius:12px;padding:22px;text-align:center;color:var(--muted);background:var(--soft)}
+.drop.over{background:var(--blue-soft);border-color:var(--blue)}
+.var{display:flex;gap:6px;align-items:flex-start}.var>:first-child{flex:1;min-width:0}
+.lfoot>span:last-child{min-width:0}
+.var button{margin-top:4px}
+.rhead{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}
+.rhead h2{margin:0}.actions{display:flex;gap:8px;flex-wrap:wrap}
+.chip{display:inline-block;background:var(--chip);border:1px solid var(--line);border-radius:999px;padding:1px 9px;font-size:12px;color:var(--muted);font-weight:500}
+.chip.b{background:var(--blue-soft);color:var(--blue);border-color:var(--blue-line)}
+.set{border:1px solid var(--blue-line);background:var(--set-bg);border-radius:12px;margin-bottom:12px}
+.shead{display:flex;gap:8px;align-items:center;padding:10px 12px 4px}
+.shead .sname{flex:1;min-width:0;font-weight:650;font-size:15px;background:transparent;border-color:transparent;margin:0;padding:6px 8px}
+.shead input.sname::placeholder{color:var(--muted);opacity:.75;font-weight:400}
+.shead input.sname:placeholder-shown{border-color:var(--line);background:var(--field)}
+.shead .sname:hover,.shead .sname:focus{background:var(--field);border-color:var(--line)}
+.shead .count{font-size:12px;color:var(--muted);white-space:nowrap}
+.sbar{display:flex;gap:4px;align-items:center;flex-wrap:wrap;padding:0 12px 8px}
+.sbar .sp{flex:1}
+button.tab{padding:4px 10px;font-size:12px;border-color:transparent;background:transparent;color:var(--muted);border-radius:7px}
+button.tab:hover{background:var(--card);border-color:var(--line);color:var(--ink)}
+button.tab.on{background:var(--card);border-color:var(--blue-line);color:var(--blue)}
+button.tab small{font-size:11px}
+.chips{display:flex;gap:6px;flex-wrap:wrap}
+.spanel{margin:0 12px 10px;padding:10px 12px;background:var(--card);border:1px solid var(--blue-line);border-radius:10px}
+.prow{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:8px}
+.plabel{font-size:12px;color:var(--muted)}
+.seg.sm button{padding:4px 10px;font-size:12px}
+button.link{border:none;background:none;padding:6px 0 0;color:var(--blue);font-size:12px}
+button.link:hover{background:none;text-decoration:underline}
+button.ghost{border-color:transparent;background:transparent;color:var(--muted)}
+button.ghost:hover{background:var(--chip);color:var(--ink)}
+details.more{position:relative}
+details.more summary{list-style:none;cursor:pointer;border-radius:9px;padding:4px 9px;font-size:16px;line-height:1}
+details.more summary::-webkit-details-marker{display:none}
+details.more .menu{position:absolute;right:0;top:calc(100% + 4px);background:var(--card);border:1px solid var(--line);border-radius:10px;box-shadow:0 8px 24px var(--shadow);padding:4px;z-index:4;display:flex;flex-direction:column;min-width:160px}
+details.more .menu button{border:none;text-align:left;padding:7px 10px;font-size:13px}
+.sopts{display:grid;grid-template-columns:repeat(4,1fr);gap:0 10px;padding-top:2px}
+.sopts .wide{grid-column:span 2}.sopts .full{grid-column:1/-1}
+.list{min-height:44px;padding:4px 8px 8px}
+.list.over{background:var(--blue-soft);border-radius:0 0 12px 12px}
+.empty{padding:10px;color:var(--muted);font-size:12px;text-align:center}
+.cr{display:flex;align-items:center;gap:10px;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:6px 8px;margin-top:6px;cursor:grab;user-select:none}
+.cr.sel{border-color:var(--blue);background:var(--blue-soft)}
+.cr img,.cr .ph{width:40px;height:56px;object-fit:cover;border-radius:6px;background:var(--chip);flex:none}
+.cr img.sq{height:40px}.cr img.alt{width:32px;margin-left:-6px}
+.chip.w{color:var(--warn-ink)}
+#pairNote{margin:6px 0 0;color:var(--muted);font-size:13px}
+.cr .meta{flex:1;min-width:0}.cr .meta b{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:600}
+.cr .meta small{color:var(--muted)}
+.over:empty{display:none}
+.over{background:var(--warn-soft);border:1px solid var(--warn-line);color:var(--warn-ink);border-radius:9px;padding:8px 10px;font-size:12px;margin:4px 0 6px}
+.over b{color:var(--warn-strong)}.over button{margin-top:6px;padding:5px 10px;font-size:12px}
+.ctry{display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin-top:4px}
+.ctry .chip{display:inline-flex;align-items:center;gap:4px;padding:3px 4px 3px 10px;font-size:13px}.ctry .chip small{opacity:.7}
+.ctry button.x{border:none;background:none;padding:0 5px;font-size:15px;line-height:1;color:inherit;border-radius:999px}.ctry button.x:hover{background:var(--blue-line)}
+.ngrid{display:grid;grid-template-columns:repeat(4,1fr);gap:0 8px}
+.nrow{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;align-items:end}
+.nrow label{margin:0;font-size:11px}.nrow input{margin:2px 0 0;padding:5px 8px;font-size:12px}
+.nrow input:placeholder-shown{background:var(--soft)}
+.cr input.ver{width:76px;margin:0;padding:5px 8px;font-size:12px;user-select:text}
+.cr .rfields{display:flex;gap:6px;flex:none}
+.cr .racts{display:flex;gap:2px;flex:none}
+.cr .meta small.nm::before{content:"→ ";opacity:.6}
+.cr .meta small.nm{display:block;cursor:text;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.cr .meta small.nm.own{color:var(--blue)}
+.cr input[type=checkbox]{width:auto;margin:0}
+.pill{font-size:11px;border-radius:6px;padding:1px 6px;background:var(--chip);color:var(--muted)}.pill.on{background:var(--green-soft);color:var(--green)}
+.uhead{display:flex;justify-content:space-between;align-items:center;gap:8px}.uhead h3{margin:0}.uhead select{width:auto}
+.banner{background:var(--red-soft);border:1px solid var(--red-line);color:var(--red);border-radius:10px;padding:10px 12px;margin:16px 24px 0}
+.done{display:flex;align-items:center;gap:12px;flex-wrap:wrap;background:var(--green-soft);border:1px solid var(--green-line);color:var(--green-ink);border-radius:10px;padding:10px 12px;margin:16px 24px 0;font-weight:600}
+.done .sp{flex:1}.done a,.dfoot a{text-decoration:none}
+a.btn{display:inline-block;font:inherit;border:1px solid var(--line);background:var(--field);border-radius:9px;padding:8px 12px;color:var(--ink);white-space:nowrap}
+a.btn:hover{background:var(--chip)}
+dialog{background:var(--card);color:var(--ink);border:none;border-radius:14px;padding:0;width:min(920px,94vw);box-shadow:0 20px 60px var(--shadow-lg)}
+dialog::backdrop{background:var(--backdrop)}
+.cr img{cursor:zoom-in}.cr img:hover{outline:2px solid var(--blue);outline-offset:1px}
+#askDlg{width:min(440px,92vw)}#askDlg .dbody{padding:22px 24px 18px}#askDlg h2{margin:0 0 8px;font-size:17px}#askDlg p{margin:0;color:var(--muted);font-size:14px;line-height:1.45}#askDlg .arow{display:flex;justify-content:flex-end;gap:8px;margin-top:20px}
+#pvDlg{width:min(1100px,96vw);background:#0b0d14;color:#e8eaf2}
+#pvDlg::backdrop{background:rgba(0,0,0,.78)}
+.pvhead{display:flex;align-items:center;gap:10px;padding:10px 14px}.pvhead b{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:14px}
+.pvhead small{color:#9aa1b5;white-space:nowrap}.pvhead button{background:#1a1e2b;color:#e8eaf2;border:1px solid #2a3042}
+.pvhead button:disabled{opacity:.35}
+.pvstage{display:flex;align-items:center;justify-content:center;gap:14px;padding:0 14px 14px;height:min(80vh,860px)}
+.pvstage figure{margin:0;display:flex;flex-direction:column;align-items:center;gap:6px;min-width:0;height:100%;justify-content:center}
+.pvstage figcaption{font-size:12px;color:#9aa1b5}
+.pvstage img,.pvstage video{max-width:100%;max-height:100%;min-height:0;border-radius:8px;background:#000;object-fit:contain}
+.pvstage figure.cap img{max-height:calc(100% - 24px)}
+.rtable .pvlink{cursor:zoom-in;text-decoration:underline dotted}
+.libf{gap:14px;flex-wrap:wrap}.libf label{display:flex;align-items:center;gap:5px;margin:0;color:var(--ink)}.libf input{width:auto;margin:0}
+.lib{border:1px solid var(--line);border-radius:10px;padding:8px 10px;margin-top:6px;display:flex;gap:10px;align-items:flex-start}
+.lib .lt{flex:1;min-width:0;white-space:pre-wrap;font-size:13px;max-height:84px;overflow:auto}
+.lib .lm{font-size:11px;color:var(--muted);margin-top:4px}
+.lib select{width:auto;margin:0;padding:4px 6px;font-size:12px}
+.lib.retired .lt{color:var(--muted)}
+.lfoot{display:flex;align-items:center;gap:6px;margin:4px 0 2px;font-size:11px;color:var(--muted)}
+.tag{font-size:11px;border-radius:6px;padding:1px 7px;font-weight:600;flex:none}
+.tag.proven{background:var(--green-soft);color:var(--green)}.tag.testing{background:var(--blue-soft);color:var(--blue)}.tag.failed{background:var(--red-soft);color:var(--red)}
+.lib .acts{display:flex;flex-direction:column;gap:5px;flex:none}.lib .acts button{padding:5px 10px;font-size:12px}
+button.ok{color:var(--green)}button.no{color:var(--red)}
+.lgroup{margin-top:14px}.lgroup>h3{margin:0 0 2px;color:var(--ink)}
+.lib .k{font-size:11px;color:var(--muted);width:56px;flex:none;padding-top:2px}
+.tabs{display:flex;gap:4px;border-bottom:1px solid var(--line);margin:10px 0 4px}
+.tabs button{border:none;border-bottom:2px solid transparent;border-radius:0;color:var(--muted);padding:8px 10px}
+.tabs button.on{color:var(--ink);border-bottom-color:var(--blue);font-weight:600}
+.dbody{padding:20px}.dfoot{display:flex;gap:8px;justify-content:flex-end;align-items:center;padding:12px 20px;border-top:1px solid var(--line)}
+.dfoot .sp{flex:1}
+.rbanner{border-radius:12px;padding:12px 14px;font-size:14px;margin-bottom:12px;display:flex;gap:10px;align-items:flex-start}
+.rbanner b{display:block;font-size:15px}.rbanner small{color:inherit;opacity:.85}
+.rbanner.ok{background:var(--green-soft);color:var(--green-ink)}.rbanner.bad{background:var(--red-soft);color:var(--red-ink)}.rbanner.live{background:var(--orange-soft);color:var(--orange-ink)}
+.rnote{border-radius:10px;padding:8px 12px;margin:8px 0;font-size:13px}
+.rnote h4{margin:0 0 4px;font-size:12px;text-transform:uppercase;letter-spacing:.04em}
+.rnote ul{margin:0;padding-left:18px}.rnote li{margin:3px 0}
+.rnote.err{background:var(--red-soft);color:var(--red-ink)}.rnote.chk{background:var(--warn-soft);color:var(--warn-ink)}.rnote.fyi{background:var(--chip);color:var(--muted)}
+.rfacts{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0}
+.rtable{width:100%;border-collapse:collapse;font-size:12px;margin-top:6px}
+.rtable th{text-align:left;color:var(--muted);font-weight:600;padding:6px 8px;border-bottom:1px solid var(--line);position:sticky;top:0;background:var(--card)}
+.rtable td{padding:6px 8px;border-bottom:1px solid var(--line);vertical-align:top}
+.rtable tr.grp td{background:var(--blue-soft);font-weight:600;color:var(--ink)}
+.rtable tr.skip td{color:var(--muted);text-decoration:line-through}
+.rtable .hook{max-width:260px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.rscroll{max-height:46vh;overflow:auto;border:1px solid var(--line);border-radius:10px}
+[hidden]{display:none!important}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:9px;overflow:hidden}
+.seg button{border:none;border-radius:0;padding:8px 12px}.seg button.on{background:var(--ink);color:var(--on-ink)}
+.seg button[data-mode=ACTIVE].on{background:var(--red);color:#fff}
+button.danger{background:var(--red);border-color:var(--red);color:#fff}
+pre{background:#0f1424;color:#dbe2f5;border-radius:10px;padding:12px;max-height:52vh;overflow:auto;font:12px/1.5 ui-monospace,Menlo,monospace;white-space:pre-wrap;margin:0}
+.tl{margin:8px 0 6px}
+.tl-row{display:grid;grid-template-columns:30px 1fr auto;gap:0 14px;position:relative;padding-bottom:16px;align-items:start}
+.tl-row:not(:last-child)::before{content:"";position:absolute;left:14px;top:30px;bottom:0;width:2px;background:var(--line)}
+.tl-row.complete:not(:last-child)::before{background:var(--green)}
+.tl-ic{width:30px;height:30px;border-radius:50%;border:2px solid var(--line);display:grid;place-items:center;font-size:13px;font-weight:700;color:var(--muted);background:var(--card);position:relative;z-index:1}
+.tl-row.complete .tl-ic{background:var(--green);border-color:var(--green);color:#fff}
+.tl-row.fail .tl-ic{background:var(--red);border-color:var(--red);color:#fff}
+.tl-row.now .tl-ic{border-color:var(--blue-line);border-top-color:var(--blue);animation:spin .9s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.tl-main{min-width:0;padding-top:4px}
+.tl-t{font-weight:600;color:var(--muted)}.tl-row.now .tl-t,.tl-row.complete .tl-t,.tl-row.fail .tl-t{color:var(--ink)}
+.tl-row.now .tl-t{font-size:15px}
+.tl-d{font-size:12px;color:var(--muted);margin-top:1px}.tl-row.fail .tl-d{color:var(--red-ink)}.tl-row.complete .tl-d{color:var(--green-ink)}
+.tl-n{font-size:13px;font-weight:600;color:var(--blue);font-variant-numeric:tabular-nums;padding-top:5px}
+.tl-bar{height:6px;border-radius:3px;background:var(--line);overflow:hidden;margin-top:9px}
+.tl-bar i{display:block;height:100%;width:0;background-color:var(--blue);border-radius:3px;transition:width .4s}
+.tl-bar.wait i{opacity:.6;background-image:linear-gradient(45deg,rgba(255,255,255,.35) 25%,transparent 25%,transparent 50%,rgba(255,255,255,.35) 50%,rgba(255,255,255,.35) 75%,transparent 75%);background-size:20px 20px;animation:stripes 1s linear infinite}
+@keyframes stripes{to{background-position:20px 0}}
+.tl-files{margin-top:9px;display:grid;gap:4px}
+.tl-file{display:flex;gap:10px;align-items:center;font-size:12px;background:var(--soft);border:1px solid var(--line);border-radius:8px;padding:5px 10px}
+.tl-file span:first-child{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tl-file em{font-style:normal;font-weight:600;white-space:nowrap}.tl-file em.ok{color:var(--green-ink)}.tl-file em.up{color:var(--blue)}.tl-file em.wait{color:var(--warn-ink)}
+.fin{display:flex;gap:16px;align-items:center;border-radius:14px;padding:18px 20px;margin:0 0 12px;background:var(--green-soft);border:1px solid var(--green-line);color:var(--green-ink)}
+.fin.bad{background:var(--red-soft);border-color:var(--red-line);color:var(--red-ink)}.fin.warn{background:var(--warn-soft);border-color:var(--warn-line);color:var(--warn-ink)}
+.fin-ic{width:46px;height:46px;border-radius:50%;background:var(--green);color:#fff;display:grid;place-items:center;font-size:24px;font-weight:700;flex:none}
+.fin.bad .fin-ic{background:var(--red)}.fin.warn .fin-ic{background:#d99a1c}
+.fin b{display:block;font-size:19px;line-height:1.25}.fin small{font-size:13px;opacity:.9}
+.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px;margin-bottom:12px}
+.tile{border:1px solid var(--line);border-radius:12px;padding:10px 14px;background:var(--soft)}
+.tile b{font-size:20px;display:block;line-height:1.3}.tile span{font-size:12px;color:var(--muted)}.tile.red b{color:var(--red)}
+.fin-list{border:1px solid var(--line);border-radius:12px;padding:10px 14px;margin-bottom:8px;max-height:32vh;overflow:auto}
+.fin-list h4{margin:0 0 4px;font-size:13px}.fin-list ul{list-style:none;margin:0 0 6px;padding:0;font-size:13px}
+.fin-list li{padding:2px 0;display:flex;gap:8px}.fin-list li::before{content:"✓";color:var(--green);font-weight:700}
+.busy{height:6px;border-radius:3px;background:var(--line);overflow:hidden;margin:0 0 12px;position:relative}
+.busy i{position:absolute;top:0;bottom:0;width:35%;border-radius:3px;background:var(--blue);animation:busy 1.3s ease-in-out infinite}
+@keyframes busy{0%{left:-35%}100%{left:100%}}
+.chk{list-style:none;margin:0 0 12px;padding:0;font-size:13px}.chk li{display:flex;gap:8px;align-items:center;padding:3px 0;color:var(--muted)}
+.chk li::before{content:"";width:8px;height:8px;border-radius:50%;border:1.5px solid var(--line);flex:none}
+.chk li.now{color:var(--ink);font-weight:600}.chk li.now::before{border-color:var(--blue);background:var(--blue);animation:pulse 1.4s ease-in-out infinite}
+.chk li.ok{color:var(--ink)}.chk li.ok::before{content:"✓";border:none;width:auto;height:auto;color:var(--green);font-weight:700;font-size:12px}
+.live{display:flex;align-items:center;gap:10px;margin:0 0 12px;flex-wrap:wrap}
+.live .sp{flex:1}.live b{font-weight:600}
+#liveTime{font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums}
+.dot{width:10px;height:10px;border-radius:50%;background:var(--green);flex:none;animation:pulse 1.4s ease-in-out infinite}
+.dot.quiet{background:#d99a1c}.dot.off{animation:none;background:var(--red)}.dot.ok{animation:none}
+@keyframes pulse{50%{opacity:.3;transform:scale(.8)}}
+.livewarn{background:var(--warn-soft);border:1px solid var(--warn-line);color:var(--warn-ink);border-radius:10px;padding:8px 12px;font-size:12px;margin:0 0 12px}
+@media (prefers-reduced-motion:reduce){.dot,.tl-row.now .tl-ic,.tl-bar.wait i,.busy i,.chk li.now::before{animation:none}.busy i{left:0;width:100%;opacity:.5}}
+.result{margin:0 0 4px}
+.tokens{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
+.tokens button{padding:3px 9px;font-size:12px;border-radius:999px;background:var(--chip)}
+.tokens button:hover{background:var(--blue-soft);border-color:var(--blue-line);color:var(--blue)}
+.preview{margin-top:8px;font-size:12px;color:var(--muted)}
+.preview code{background:var(--chip);border:1px solid var(--line);border-radius:6px;padding:1px 6px;color:var(--ink);font:12px ui-monospace,Menlo,monospace}
+.dtp{position:relative;margin-top:4px}
+.dtp-btn{width:100%;display:flex;align-items:center;gap:10px;text-align:left;padding:9px 12px;background:var(--field)}
+.dtp-btn svg{color:var(--blue);flex:none}.dtp-btn span:first-of-type{flex:1}.dtp-btn.empty span:first-of-type{color:var(--muted)}
+.dtp-btn.open{border-color:var(--blue);outline:2px solid var(--blue-soft)}
+.dtp-car{color:var(--muted);font-size:14px}
+.dtp-pop{position:fixed;z-index:50;background:var(--card);border:1px solid var(--line);border-radius:14px;box-shadow:0 14px 40px var(--shadow-lg);padding:14px;display:grid;grid-template-columns:1fr;gap:12px}
+.dtp-nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
+.dtp-nav b{font-size:14px}.dtp-nav button{padding:2px 10px;font-size:18px;line-height:1}
+.dtp-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;text-align:center}
+.dtp-grid .dow{font-size:11px;color:var(--muted);padding:4px 0;font-weight:600}
+.dtp-grid button{padding:0;height:30px;border:1px solid transparent;border-radius:8px;background:transparent;font-size:13px}
+.dtp-grid button:hover:not(:disabled){background:var(--blue-soft);color:var(--blue)}
+.dtp-grid button.today{border-color:var(--blue-line);color:var(--blue);font-weight:650}
+.dtp-grid button.on{background:var(--blue);border-color:var(--blue);color:#fff;font-weight:650}
+.dtp-grid button:disabled{opacity:.3}
+.dtp-trow{display:flex;align-items:center;gap:6px;border-top:1px solid var(--line);padding-top:12px}
+.dtp-trow .lbl{font-size:13px;font-weight:600;color:var(--muted);margin-right:auto}
+.dtp-trow input{width:46px;margin:0;text-align:center;font-size:15px;font-variant-numeric:tabular-nums;padding:7px 4px}
+.dtp-trow .colon{font-weight:650;color:var(--muted)}
+.dtp-trow button.ap{width:52px;padding:7px 0;font-weight:600}
+.dtp-foot{grid-column:1/-1;display:flex;align-items:center;border-top:1px solid var(--line);padding-top:10px}.dtp-foot .sp{flex:1}
+.dtp-foot button{padding:6px 14px}
+.urlwrap{position:relative;display:block}.urlwrap input{padding-right:74px}
+.urlopen{position:absolute;right:6px;top:50%;transform:translateY(calc(-50% + 2px));font-size:12px;font-weight:600;color:var(--blue);background:var(--blue-soft);border:1px solid var(--blue-line);border-radius:7px;padding:3px 9px;text-decoration:none}
+.urlopen:hover{filter:brightness(1.1)}
+.quick{display:flex;gap:6px;margin-top:6px}.quick button{padding:4px 10px;font-size:12px}
+.or{display:flex;align-items:center;gap:8px;margin:12px 0 4px;color:var(--muted);font-size:12px}
+.or::before,.or::after{content:"";flex:1;border-top:1px solid var(--line)}
+@media (max-width:1000px){main{grid-template-columns:1fr}}
+/* each side scrolls on its own; the left side is tabbed so one section shows at a time */
+.stabs{display:flex;margin-bottom:12px}.stabs button{flex:1;padding:8px 6px}
+.stabs .chip{margin-left:4px;font-size:11px;padding:0 7px}.stabs button.on .chip{background:transparent;color:inherit;border-color:currentColor}
+.side .card{margin-bottom:0}
+.right{padding-top:0}
+.rhead{position:sticky;top:0;z-index:3;background:var(--card);padding-top:18px;padding-bottom:12px;margin-bottom:4px;border-bottom:1px solid var(--line)}
+@media (min-width:1001px){
+  body{height:100vh;display:flex;flex-direction:column;overflow:hidden}
+  main{flex:1;min-height:0;grid-template-rows:minmax(0,1fr)}
+  .side{display:flex;flex-direction:column;min-height:0;max-height:100%}
+  .side .stabs{flex:none}
+  .side .sbody{flex:1;min-height:0;overflow-y:auto;scrollbar-gutter:stable;border-radius:14px}   /* same width on every tab, scrollbar or not */
+  .right{max-height:100%;overflow:auto}
+}
+button.fold{border:none;background:none;padding:4px 6px;color:var(--muted);font-size:15px;width:26px}
+button.fold:hover{background:var(--card);color:var(--ink)}
+.set.folded .shead{padding-bottom:10px}
+.sfull{flex:1;min-width:0;font-weight:650;font-size:15px;padding:6px 8px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sfull.none{color:var(--muted);font-weight:400}
+.nbox{display:grid;grid-template-columns:.8fr 1.6fr 1fr 1fr 1.2fr;gap:6px;padding:0 12px 8px}
+.nbox label{margin:0;font-size:11px}.atag{font-size:10px;color:var(--blue);background:var(--blue-soft);border-radius:5px;padding:0 5px;margin-left:3px}.nbox input{margin:2px 0 0;padding:5px 8px;font-size:13px}
+.ungrouped{border-top:none;margin:10px 0 14px;padding:10px 12px;border:1px dashed var(--drop-line);border-radius:12px;background:var(--soft)}
+
+.theme button{padding:4px 10px;font-size:12px}
+</style>
+</head>
+<body>
+<header>
+  <h1>Ad Launcher</h1>
+  <span class="badge" id="acct">connecting…</span>
+  <span class="badge">Everything launches PAUSED · Advantage+ creative off</span>
+  <span class="sp"></span>
+  <span class="seg theme" id="theme" title="Appearance"><button data-t="light">Light</button><button data-t="dark">Dark</button><button data-t="auto">Auto</button></span>
+  <label style="margin:0;display:flex;align-items:center;gap:6px">Account
+    <select id="profile" style="width:auto;margin:0"></select></label>
+</header>
+<div id="banner" class="banner" hidden></div>
+<div id="doneBar" class="done" hidden><span id="doneText"></span><span class="sp"></span>
+  <a class="btn" id="doneAds" target="_blank">Open in Ads Manager</a><button class="primary" id="doneNew">Start a new launch</button></div>
+<main>
+<section class="side">
+  <div class="seg stabs" id="sideTabs"><button data-side="setup" class="on">Setup</button><button data-side="creatives">Creatives</button><button data-side="copy">Copy</button></div>
+  <div class="sbody">
+  <div class="card" data-pane="setup">
+    <h2>Setup</h2>
+    <label>Campaign<select id="campaign"></select></label>
+    <div id="newcamp" class="row">
+      <label>New campaign name<input id="campName" placeholder="Product//CBO"></label>
+      <label style="flex:.7">Budget<select id="campType" title="CBO: one budget for the campaign. ABO: each ad set has its own budget">
+        <option value="cbo">Campaign (CBO)</option><option value="abo">Per ad set (ABO)</option></select></label>
+      <label style="flex:.6" id="campBudgetBox">Daily budget (<span class="cur">account currency</span>)<input id="campBudget" type="number" min="1" step="1" placeholder="100"></label>
+    </div>
+    <div id="aboRow">
+      <label>Daily budget per ad set (<span class="cur">account currency</span>)<input id="setBudget" type="number" min="1" step="1" placeholder="e.g. 30"></label>
+      <p class="hint" id="aboHint"></p>
+    </div>
+    <label>Page<select id="page"></select></label>
+    <label>Website URL<span class="urlwrap"><input id="url" placeholder="https://yourstore.com/products/…" autocomplete="off"><a id="urlOpen" class="urlopen" target="_blank" rel="noopener" title="Open the landing page (with your UTM tags) to check it" hidden>Open ↗</a></span></label>
+    <label>UTM tags (optional)<input id="tags" placeholder="utm_source=facebook&utm_medium=paid"></label>
+    <div class="quick"><button type="button" id="tagsStd">Use standard</button></div>
+    <p class="hint" id="tagsHint"></p>
+    <div class="row">
+      <label>CTA<select id="cta">
+        <option value="SHOP_NOW">Shop now</option><option value="LEARN_MORE">Learn more</option><option value="ORDER_NOW">Order now</option><option value="BUY_NOW">Buy now</option><option value="GET_OFFER">Get offer</option><option value="SEE_MORE">See more</option>
+      </select></label>
+      <span></span>
+    </div>
+    <label>Start date &amp; time (<span id="tzName">ad account time zone</span>)</label>
+    <input id="startDate" type="hidden"><input id="startTime" type="hidden">
+    <div class="dtp" id="dtp">
+      <button type="button" class="dtp-btn" id="dtpBtn"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4"/></svg><span id="dtpText"></span><span class="dtp-car">▾</span></button>
+      <div class="dtp-pop" id="dtpPop" hidden>
+        <div class="dtp-cal">
+          <div class="dtp-nav"><button type="button" class="ghost" id="dtpPrev" title="Previous month">‹</button><b id="dtpMonth"></b><button type="button" class="ghost" id="dtpNext" title="Next month">›</button></div>
+          <div class="dtp-grid" id="dtpDays"></div>
+        </div>
+        <div class="dtp-trow"><span class="lbl">Time</span>
+          <input id="dtpH" inputmode="numeric" maxlength="2" placeholder="12" title="Hour: type it or use ↑ ↓" autocomplete="off"><span class="colon">:</span>
+          <input id="dtpM" inputmode="numeric" maxlength="2" placeholder="00" title="Minutes: type them or use ↑ ↓" autocomplete="off">
+          <button type="button" class="ap" id="dtpAp" title="Switch AM / PM">AM</button>
+        </div>
+        <div class="dtp-foot"><button type="button" class="ghost" id="dtpClear">Clear</button><span class="sp"></span><button type="button" class="primary" id="dtpDone">Done</button></div>
+      </div>
+    </div>
+    <div class="quick"><button id="midnight">Midnight tonight</button><button id="noStart">No start time</button></div>
+    <p class="hint" id="startHint"></p>
+  </div>
+
+  <div class="card" data-pane="creatives" hidden>
+    <h2>Creatives</h2>
+    <div class="row">
+      <button id="pickFolder" class="primary" title="Pick one folder, or ⌘-click to pick several. Every image and video inside each one is added.">Choose folders…</button>
+      <button id="pickFiles" class="primary" title="Pick single videos or images inside a folder. ⌘-click to pick several, ⇧-click for a range.">Choose videos…</button>
+    </div>
+    <p class="hint">⌘-click in the Finder window to pick several folders, or several videos inside a folder. Each pick adds to what's already loaded.</p>
+    <p class="hint" id="folderShown"></p>
+    <div id="drop" class="drop">Or drag image/video files here</div>
+    <div class="or">or paste a folder or file path</div>
+    <div class="row">
+      <input id="folder" placeholder="Paste a folder or file path…" autocomplete="off"><input id="folderLoaded" type="hidden">
+      <button id="loadFolder" style="flex:none">Load</button>
+    </div>
+  </div>
+
+  <div class="card" data-pane="copy" hidden>
+    <h2>Copy <span class="chip">every ad uses this</span></h2>
+    <div class="row">
+      <button id="reuseLast" title="Fills this section with the copy from your most recent launch">↺ Reuse last launch</button>
+      <button id="openLib">📚 Copy library</button>
+    </div>
+    <p class="hint">Everything you launch goes into the library as <b>Testing</b>. Mark lines Proven or Failed there once results are in. Different copy for one ad set: ✎ Copy on the ad set. For one ad: ✎ on its row.</p>
+    <h3>Primary text <span class="chip" id="pCount"></span></h3>
+    <div id="pOver" class="over"></div><div id="pList"></div><button class="add" data-add="p">+ Add variation</button>
+    <h3>Headline <span class="chip" id="hCount"></span></h3>
+    <div id="hOver" class="over"></div><div id="hList"></div><button class="add" data-add="h">+ Add variation</button>
+    <h3>Description (optional)</h3>
+    <input id="desc">
+  </div>
+  </div>
+</section>
+
+<section class="card right">
+  <div class="rhead">
+    <div><h2>Uploading to <span class="chip b" id="target">—</span></h2><p class="hint" id="count">No creatives loaded</p></div>
+    <div class="actions">
+      <button id="foldAll" title="Collapse or expand every ad set">Collapse all</button>
+      <button id="addSet">+ Ad set</button>
+      <button id="review" class="primary">Review &amp; launch</button>
+    </div>
+  </div>
+  <div class="ungrouped" id="ungWrap">
+    <div class="uhead"><h3>Ungrouped creatives <span class="chip" id="ungN" hidden></span></h3><span class="sp" style="flex:1"></span><button id="pairSel" hidden title="Make these two images one ad: the square one in feeds, the tall one in Stories and Reels">Pair selected (1:1 + 9:16)</button><button id="selAll">Select all</button><select id="moveTo" style="margin:0"></select></div>
+    <p id="pairNote" hidden></p>
+    <p class="hint">Click rows to select (shift-click for a range), then drag them onto an ad set or use “Move selected to…”.</p>
+    <div id="ung" class="list" data-drop=""></div>
+  </div>
+  <div id="sets"></div>
+</section>
+</main>
+
+<dialog id="dlg">
+  <div class="dbody">
+    <h2 id="dTitle">Review</h2>
+    <div class="live" id="live" hidden><span class="dot" id="liveDot"></span><b id="liveNow"></b><span class="sp"></span><span id="liveTime"></span></div>
+    <p class="livewarn" id="liveWarn" hidden></p>
+    <div class="result" id="dResult" hidden></div>
+    <div class="tl" id="steps" hidden></div>
+    <div id="checking" hidden><div class="busy"><i></i></div><ul class="chk" id="chkList"></ul></div>
+    <div id="dRep"></div>
+    <pre id="dOut"></pre>
+  </div>
+  <div class="dfoot">
+    <label id="skipWrap" style="margin:0;display:flex;gap:6px;align-items:center"><input type="checkbox" id="skipLinks" style="width:auto;margin:0"> Skip landing-page check</label>
+    <button id="dLogToggle" hidden>Show full log</button>
+    <span class="sp"></span>
+    <button id="dRecheck">Re-check</button>
+    <a class="btn" id="dAds" target="_blank" hidden>Open in Ads Manager</a>
+    <button id="dNew" class="primary" hidden>Start a new launch</button>
+    <button id="dClose">Close</button>
+    <div class="seg" id="modeWrap" title="Paused: nothing spends until you switch it on in Ads Manager. Active: ad sets and ads go live once Meta approves them.">
+      <button data-mode="PAUSED" class="on">Paused</button><button data-mode="ACTIVE">Active</button>
+    </div>
+    <button id="dLaunch" class="primary" disabled>Launch (PAUSED)</button>
+  </div>
+</dialog>
+
+<dialog id="askDlg">
+  <div class="dbody"><h2 id="askTitle"></h2><p id="askText"></p>
+    <div class="arow"><button id="askNo">Cancel</button><button id="askYes" class="primary">OK</button></div></div>
+</dialog>
+
+<dialog id="pvDlg">
+  <div class="pvhead"><b id="pvName"></b><small id="pvCount"></small>
+    <button id="pvPrev" title="Previous (←)">←</button><button id="pvNext" title="Next (→)">→</button><button id="pvClose" title="Close (Esc)">✕</button></div>
+  <div class="pvstage" id="pvStage"></div>
+</dialog>
+
+<dialog id="copyDlg">
+  <div class="dbody">
+    <h2 id="cTitle">Copy for this ad</h2>
+    <p class="hint" id="cHint"></p>
+    <div class="row" style="margin-top:8px"><button id="cReuse">↺ Reuse last launch</button><button id="cLib">📚 Copy library</button></div>
+    <h3>Primary text</h3><div id="cpList"></div><button class="add" data-cadd="p">+ Add variation</button>
+    <h3>Headline</h3><div id="chList"></div><button class="add" data-cadd="h">+ Add variation</button>
+    <h3>Description</h3><input id="cDesc">
+  </div>
+  <div class="dfoot">
+    <button id="cReset">Use batch copy</button><button id="cAll" title="Replaces the main Copy section and removes all custom copy on ad sets and individual ads">Use for entire launch</button><span class="sp"></span>
+    <button id="cCancel">Cancel</button><button id="cSave" class="primary">Save</button>
+  </div>
+</dialog>
+
+<dialog id="libDlg">
+  <div class="dbody">
+    <div class="rhead" style="margin:0"><h2>Copy library <span class="chip" id="libProduct"></span></h2>
+      <label class="libf" style="display:flex;gap:5px;align-items:center;margin:0;color:var(--ink)"><input type="checkbox" id="libAll" style="width:auto;margin:0"> All products</label></div>
+    <div class="tabs" id="libTabs">
+      <button data-tab="testing">Testing <span class="chip" id="tntesting"></span></button><button data-tab="proven">Proven <span class="chip" id="tnproven"></span></button><button data-tab="failed">Failed <span class="chip" id="tnfailed"></span></button>
+    </div>
+    <p class="hint" id="libHint"></p>
+    <div id="libBody"></div>
+  </div>
+  <div class="dfoot"><span class="sp"></span><button id="libClose" class="primary">Done</button></div>
+</dialog>
+
+<script>
+(function(){const el=document.getElementById('theme');const paint=()=>{const t=document.documentElement.dataset.theme||'auto';el.querySelectorAll('button').forEach(b=>b.classList.toggle('on',b.dataset.t===t));};
+el.addEventListener('click',e=>{const t=e.target.dataset&&e.target.dataset.t;if(!t)return;if(t==='auto')delete document.documentElement.dataset.theme;else document.documentElement.dataset.theme=t;try{localStorage.setItem('adl-theme',t)}catch(_){}paint();});paint();})();
+const $ = s => document.querySelector(s);
+// left side tabs (remembered per viewer)
+function sideTab(t) {
+  document.querySelectorAll("#sideTabs button").forEach(b => b.classList.toggle("on", b.dataset.side === t));
+  document.querySelectorAll("[data-pane]").forEach(p => p.hidden = p.dataset.pane !== t);
+  try { localStorage.setItem("adl-side", t); } catch {}
+}
+document.getElementById("sideTabs").addEventListener("click", e => { const b = e.target.closest("button"); if (b) sideTab(b.dataset.side); });
+try { const t = localStorage.getItem("adl-side"); if (["setup","creatives","copy"].includes(t)) sideTab(t); } catch {}
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const MAX = 5;
+const S = {profile:"default", cur:"", tz:"", campaigns:[], adsetsOfCampaign:[], pages:[], cr:{}, ung:[], sets:[], sel:new Set(),
+           copy:{p:[""], h:[""], d:""}, lib:[], libTarget:"main", csv:null, nextKey:1, editing:null, edit:null, drag:[]};
+const session = (crypto.randomUUID ? crypto.randomUUID() : String(Date.now())).slice(0, 18);
+
+async function api(path, opts={}) {
+  const sep = path.includes("?") ? "&" : "?";
+  const res = await fetch(path + sep + "profile=" + encodeURIComponent(S.profile),
+    {...opts, headers:{"X-Launcher":"1", ...(opts.json ? {"Content-Type":"application/json"} : {}), ...(opts.headers||{})},
+     body: opts.json ? JSON.stringify(opts.json) : opts.body});
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok || data.error) throw new Error(data.error || res.statusText);
+  return data;
+}
+function banner(msg) { const b = $("#banner"); b.hidden = !msg; b.textContent = msg || ""; }
+
+// ---------- init ----------
+async function init() {
+  banner("");
+  try {
+    const d = await api("/api/init");
+    $("#acct").textContent = d.account_label || d.account;
+    S.cur = d.currency || ""; S.tz = d.timezone || "";   // budgets and start times are in the ad account's own currency and time zone
+    document.querySelectorAll(".cur").forEach(e => e.textContent = S.cur || "account currency");
+    $("#tzName").textContent = S.tz || "ad account time zone";
+    $("#profile").innerHTML = d.profiles.map(p => `<option value="${esc(p.key)}" ${p.key===S.profile?"selected":""}>${esc(p.label)}</option>`).join("");
+    S.campaigns = d.campaigns;
+    $("#campaign").innerHTML = `<option value="__new">＋ New campaign</option>` +
+      d.campaigns.map(c => `<option value="${c.id}">${esc(c.name)} — ${c.cbo ? "CBO" + (c.budget ? `, ${c.budget} ${esc(d.currency || "")}/day` : "") : "ad set budgets"} · ${esc(c.status.toLowerCase())}</option>`).join("");
+    S.pages = d.pages;
+    $("#page").innerHTML = d.pages.map(p => `<option value="${p.id}" ${p.id===d.default_page?"selected":""}>${esc(p.name)}</option>`).join("");
+    if (!$("#url").value && d.recent_urls[0]) $("#url").value = d.recent_urls[0];
+    restoreFields();
+    S.lib = d.copy_library || [];
+    let handed = null;
+    try { handed = await api("/api/handoff"); } catch {}
+    if (handed && handed.draft) { try { localStorage.setItem(draftKey(), JSON.stringify(handed.draft)); } catch {} S.ready = false; }
+    if (!S.ready) await restoreDraft();
+    if (handed && handed.draft) banner(handed.note || "Loaded a prepared launch. Check it, then Review & launch.");
+    await onCampaign();
+    S.ready = true; saveDraft();
+  } catch (e) { banner("Can't reach Meta: " + e.message); $("#acct").textContent = "not connected"; }
+}
+$("#profile").onchange = e => { S.profile = e.target.value; init(); };
+
+// Page, URL, UTM, CTA and name pattern carry over between launches and app restarts (per account)
+const KEEP = ["page", "url", "tags", "cta"];
+const keepKey = () => "launcher-fields-" + S.profile;
+function restoreFields() {
+  let saved = {};
+  try { saved = JSON.parse(localStorage.getItem(keepKey()) || "{}"); } catch {}
+  for (const id of KEEP) {
+    const el = $("#" + id), v = saved[id];
+    if (v === undefined) continue;
+    if (el.tagName === "SELECT" && ![...el.options].some(o => o.value === v)) continue;   // e.g. a Page no longer available
+    el.value = v;
+  }
+  render(); urlOpen();
+}
+function saveFields() {
+  try { localStorage.setItem(keepKey(), JSON.stringify(Object.fromEntries(KEEP.map(id => [id, $("#" + id).value])))); } catch {}
+}
+KEEP.forEach(id => $("#" + id).addEventListener("change", saveFields));
+KEEP.forEach(id => $("#" + id).addEventListener("input", saveFields));
+
+// The launch in progress (campaign, start time, creatives, ad sets, copy) survives a refresh; cleared after a launch
+const DRAFT = ["campaign", "campName", "campType", "campBudget", "setBudget", "startDate", "startTime", "folderLoaded"];
+const draftKey = () => "launcher-draft-" + S.profile;
+function saveDraft() {
+  if (!S.ready) return;   // don't overwrite the saved draft before it has been restored
+  const d = {fields: Object.fromEntries(DRAFT.map(id => [id, $("#" + id).value])),
+             cr: S.cr, ung: S.ung, sets: S.sets, copy: S.copy, nextKey: S.nextKey};
+  try { localStorage.setItem(draftKey(), JSON.stringify(d)); } catch {}
+}
+function clearDraft() { try { localStorage.removeItem(draftKey()); } catch {} }
+async function restoreDraft() {
+  let d = null;
+  try { d = JSON.parse(localStorage.getItem(draftKey()) || "null"); } catch {}
+  if (!d) return;
+  for (const [id, v] of Object.entries(d.fields || {})) {
+    const el = $("#" + id);
+    if (!el) continue;   // a box from an older version of the screen
+    if (el.tagName === "SELECT" && ![...el.options].some(o => o.value === v)) continue;   // e.g. a campaign since deleted
+    el.value = v;
+  }
+  S.copy = d.copy || S.copy; S.nextKey = d.nextKey || 1;
+  const old = Object.values(d.cr || {});
+  let found = [];
+  if (old.length) { try { found = await api("/api/register", {method:"POST", json:{paths: old.flatMap(c => c.alt ? [c.path, c.alt.path] : [c.path])}}); } catch (e) { banner(e.message); } }
+  const ok = new Set(found.map(f => f.id));
+  const info = Object.fromEntries(found.map(f => [f.id, f]));
+  let lostAlt = 0;
+  for (const c of old) if (ok.has(c.id)) {
+    S.cr[c.id] = Object.assign(c, {w:info[c.id].w, h:info[c.id].h, shape:info[c.id].shape});
+    if (c.alt && !ok.has(c.alt.id)) { delete c.alt; delete c.pairStem; lostAlt++; }   // its 9:16 file is gone: back to a single image
+  }
+  S.ung = (d.ung || []).filter(id => ok.has(id));
+  // older drafts kept the name in nameOwn
+  S.sets = (d.sets || []).map(s => {
+    const name = (s.nameOwn || "").trim() || s.name || "";
+    let n = s.n && NF.some(f => (s.n[f] || "").trim()) ? s.n : null;
+    if (!n) { const p = name.split("//"); n = p.length === 5 ? Object.fromEntries(NF.map((f, i) => [f, p[i]])) : {concept: name}; }   // older drafts / hand-offs held one typed name
+    const x = {...s, n: {...n}, items: s.items.filter(id => ok.has(id))}; x.name = joinName(x); return x;
+  });
+  const lost = old.filter(c => !ok.has(c.id)).length + lostAlt;
+  if (lost) banner(`${lost} creative${lost === 1 ? " was" : "s were"} moved or deleted since last time and left out.`);
+  if (!$("#folderLoaded").value) $("#folderLoaded").value = $("#folder").value;   // older drafts kept it in the visible box
+  $("#folder").value = ""; showFolder($("#folderLoaded").value); startHint(); updateTarget(); budgetUI(); renderCopy(); render();
+}
+document.addEventListener("input", () => saveDraft());
+document.addEventListener("change", () => saveDraft());
+
+async function onCampaign() {
+  const v = $("#campaign").value, isNew = v === "__new";
+  $("#newcamp").style.display = isNew ? "" : "none";
+  S.adsetsOfCampaign = [];
+  if (!isNew) { try { S.adsetsOfCampaign = await api("/api/adsets?campaign=" + v); } catch (e) { banner(e.message); } }
+  S.sets.forEach(s => { if (isNew) s.mode = "new"; });
+  updateTarget(); budgetUI(); render();
+}
+$("#campaign").onchange = onCampaign;
+$("#campName").oninput = updateTarget;
+$("#campType").onchange = () => { updateTarget(); budgetUI(); render(); };
+$("#setBudget").oninput = () => { budgetUI(); S.sets.forEach(refreshChips); };
+function camp() { return S.campaigns.find(c => c.id === $("#campaign").value); }
+// ABO = a new campaign set to "Per ad set", or an existing campaign without a campaign budget
+function isAbo() { const c = camp(); return c ? !c.cbo : $("#campaign").value === "__new" && $("#campType").value === "abo"; }
+function setBudgetOf(s) { return String(s.daily_budget || "").trim() || $("#setBudget").value.trim(); }
+function budgetUI() {
+  const abo = isAbo(), isNew = $("#campaign").value === "__new";
+  $("#campBudgetBox").style.display = isNew && !abo ? "" : "none";
+  $("#aboRow").style.display = abo ? "" : "none";
+  $("#campName").placeholder = abo ? "Product//ABO" : "Product//CBO";
+  if (!abo) return;
+  const sets = S.sets.filter(s => s.items.length && s.mode !== "existing");
+  const missing = sets.filter(s => !setBudgetOf(s)).length;
+  const total = sets.reduce((t, s) => t + (parseFloat(setBudgetOf(s)) || 0), 0);
+  $("#aboHint").textContent = !sets.length ? "Each new ad set gets this budget. Change one ad set's under its Targeting & page tab."
+    : missing ? `${missing} ad set${missing === 1 ? " has" : "s have"} no budget yet.`
+    : `${sets.length} new ad set${sets.length === 1 ? "" : "s"} · ${total.toLocaleString()} ${S.cur}/day in total. Change one ad set's under its Targeting & page tab.`;
+}
+function updateTarget() {
+  const c = camp();
+  $("#target").textContent = c ? c.name : (($("#campName").value || "New campaign") + ($("#campType").value === "abo" ? " (NEW ABO)" : " (NEW CBO)"));
+}
+const today = () => { const d = new Date(); return `${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`; };
+// The launch's record file in batches/, named automatically (date + campaign)
+function batchName() {
+  const c = camp();
+  const n = (c ? c.name : $("#campName").value || "launch").split("//")[0].replace(/([a-z])([A-Z])/g,"$1-$2").toLowerCase().replace(/[^a-z0-9]+/g,"-");
+  return `${today()}-${n}`.replace(/-+$/,"");
+}
+
+// ---------- ad names ----------
+// Ad set names are typed by hand; ads are named after their files unless a name is typed on the ad.
+const NF = ["batch", "concept", "format", "lp", "audience"];
+const NF_LABEL = {batch:"Batch", concept:"Concept", format:"Format", lp:"LP", audience:"Country"};
+// the ad set name is its five boxes joined with //, blank boxes left out
+// Boxes that can fill themselves from the ad set's own settings. Typing in the box overrides; clearing it goes back to automatic.
+const AUTO = {
+  audience: s => ctryList(s).join(", "),                                                        // Country: the countries picked under Targeting
+  lp: s => /\/products\//.test(String(s.link_url || "").trim() || $("#url").value) ? "PDP" : "",   // LP: a Shopify product page is the PDP
+};
+const isAuto = (s, f) => !!AUTO[f] && !((s.n || {})[f] || "").trim() && !!AUTO[f](s);
+// Batches are written out, one spelling everywhere: "b10" / "B10" / "batch 10" -> "Batch 10"
+const normBatch = v => { const m = /^\s*(?:b|batch)\s*#?\s*(\d+)\s*$/i.exec(v || ""); return m ? `Batch ${+m[1]}` : (v || "").trim(); };
+const nval = (s, f) => { const v = ((s.n || {})[f] || "").trim() || (AUTO[f] ? AUTO[f](s) : ""); return f === "batch" ? normBatch(v) : v; };
+const joinName = s => NF.map(f => nval(s, f)).filter(Boolean).join("//");
+// Refresh one ad set's title and its automatic boxes (not the box being typed in)
+function refreshName(s) {
+  if (s.mode === "existing") return;
+  s.name = joinName(s);
+  const el = document.querySelector(`.sfull[data-key="${s.key}"]`);
+  if (el) { el.textContent = s.name || "Fill in the boxes below"; el.classList.toggle("none", !s.name); }
+  document.querySelectorAll(`[data-nf][data-key="${s.key}"]`).forEach(inp => {
+    const f = inp.dataset.nf; if (f === "batch" && inp !== document.activeElement) inp.value = nval(s, f);
+    if (!AUTO[f]) return;
+    if (inp !== document.activeElement) inp.value = nval(s, f);
+    const tag = inp.parentElement.querySelector(".atag"); if (tag) tag.hidden = !isAuto(s, f);
+  });
+}
+function setLabel(s) { return s.mode === "existing" ? ((S.adsetsOfCampaign.find(a => a.id === s.id) || {}).name || "") : (s.name || "").trim(); }
+function adName(id, key) {
+  const c = S.cr[id], s = key ? setByKey(key) : null;
+  if ((c.adName || "").trim()) return c.adName.trim();
+  // new ad sets: Batch//Concept//<file name>, e.g. B3//women//ugc2 (blank boxes left out; no position numbers)
+  const stem = c.alt ? (c.pairStem || c.stem) : c.stem;   // a paired ad drops the size word: A05-1x1 + A05-9x16 -> A05
+  if (!s || s.mode === "existing") return stem;
+  return [nval(s, "batch"), nval(s, "concept"), stem].filter(Boolean).join("//");
+}
+function launchOrder() { const o = {}; let n = 0; S.sets.forEach(s => s.items.forEach(id => o[id] = ++n)); return o; }
+// ---------- targeting pickers ----------
+// Codes are the ones Meta expects (UK is GB). Common markets first, then the rest A–Z.
+const COMMON_COUNTRIES = ["US","CA","GB","AU","NZ"];
+const COUNTRIES = Object.fromEntries("US:United States|CA:Canada|GB:United Kingdom|AU:Australia|NZ:New Zealand|IE:Ireland|AE:United Arab Emirates|AR:Argentina|AT:Austria|BE:Belgium|BR:Brazil|BG:Bulgaria|CL:Chile|CO:Colombia|HR:Croatia|CY:Cyprus|CZ:Czechia|DK:Denmark|EE:Estonia|FI:Finland|FR:France|DE:Germany|GR:Greece|HK:Hong Kong|HU:Hungary|IS:Iceland|IN:India|ID:Indonesia|IL:Israel|IT:Italy|JP:Japan|KW:Kuwait|LV:Latvia|LT:Lithuania|LU:Luxembourg|MY:Malaysia|MT:Malta|MX:Mexico|NL:Netherlands|NO:Norway|PE:Peru|PH:Philippines|PL:Poland|PT:Portugal|PR:Puerto Rico|QA:Qatar|RO:Romania|SA:Saudi Arabia|SG:Singapore|SK:Slovakia|SI:Slovenia|ZA:South Africa|KR:South Korea|ES:Spain|SE:Sweden|CH:Switzerland|TW:Taiwan|TH:Thailand|TR:Turkey|VN:Vietnam".split("|").map(x => x.split(":")));
+const ctryList = s => [...new Set(String(s.countries || "").split(",").map(c => c.trim().toUpperCase()).filter(Boolean).map(c => c === "UK" ? "GB" : c))];
+const ctryName = c => COUNTRIES[c] || c;
+const ageLabel = a => +a >= 65 ? "65+" : String(a);
+const ageOpts = sel => Array.from({length:48}, (_, i) => i + 18).map(a => `<option value="${a}" ${+sel===a?"selected":""}>${ageLabel(a)}</option>`).join("");
+function countryPicker(s) {
+  const have = ctryList(s), left = c => !have.includes(c);
+  const rest = Object.keys(COUNTRIES).filter(c => !COMMON_COUNTRIES.includes(c)).sort((a,b) => ctryName(a).localeCompare(ctryName(b)));
+  return `<div class="ctry">${have.length ? "" : `<span class="hint" style="margin:0;color:var(--warn-ink)">Pick at least one country</span>`}${have.map(c => `<span class="chip b">${esc(ctryName(c))} <small>${esc(c)}</small>${have.length ? `<button class="x" data-ctry-rm="${esc(c)}" data-key="${s.key}" title="Remove ${esc(ctryName(c))}">×</button>` : ""}</span>`).join("")}
+    <select data-ctry-add="${s.key}" style="width:auto;margin:0"><option value="">+ Add country…</option>
+      <optgroup label="Common">${COMMON_COUNTRIES.filter(left).map(c => `<option value="${c}">${ctryName(c)}</option>`).join("")}</optgroup>
+      <optgroup label="All countries">${rest.filter(left).map(c => `<option value="${c}">${ctryName(c)}</option>`).join("")}</optgroup></select></div>`;
+}
+// ---------- start time ----------
+// One button opens a calendar + time grid; the hidden #startDate (YYYY-MM-DD) and #startTime (HH:MM) hold the value.
+function startValue() { const d = $("#startDate").value, t = $("#startTime").value; return d && t ? `${d}T${t}` : ""; }
+const timeLabel = t => { const [h, m] = t.split(":").map(Number); return `${h % 12 || 12}:${String(m).padStart(2,"0")} ${h < 12 ? "AM" : "PM"}`; };
+function startHint() {
+  const v = startValue();
+  $("#startHint").textContent = v ? `Ad sets start ${new Date(v).toLocaleString([], {weekday:"short", month:"short", day:"numeric", hour:"numeric", minute:"2-digit"})}, in the ad account's time zone${S.tz ? " (" + S.tz + ")" : ""}.`
+    : ($("#startDate").value || $("#startTime").value) ? "Pick both a date and a time." : "No start time: ad sets start as soon as you turn them on.";
+  const d = $("#startDate").value, t = $("#startTime").value;
+  $("#dtpText").textContent = d || t ? [d && new Date(d + "T00:00").toLocaleDateString([], {weekday:"short", month:"short", day:"numeric", year:"numeric"}), t && timeLabel(t)].filter(Boolean).join("  ·  ") : "No start time — click to pick";
+  $("#dtpBtn").classList.toggle("empty", !(d || t));
+  if (!$("#dtpPop").hidden) dtpRender();
+}
+const localDate = d => `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
+const DTP = {y: 0, m: 0};
+function setStart(d, t) {
+  if (d !== undefined) $("#startDate").value = d;
+  if (t !== undefined) $("#startTime").value = t;
+  if ($("#startDate").value && !$("#startTime").value) $("#startTime").value = "00:00";
+  if ($("#startTime").value && !$("#startDate").value) $("#startDate").value = localDate(new Date());
+  startHint(); saveDraft();
+}
+function dtpRender() {
+  const sel = $("#startDate").value, today = localDate(new Date());
+  const first = new Date(DTP.y, DTP.m, 1), days = new Date(DTP.y, DTP.m + 1, 0).getDate();
+  $("#dtpMonth").textContent = first.toLocaleDateString([], {month:"long", year:"numeric"});
+  const now = new Date(); $("#dtpPrev").disabled = DTP.y < now.getFullYear() || (DTP.y === now.getFullYear() && DTP.m <= now.getMonth());
+  let h = ["S","M","T","W","T","F","S"].map(x => `<span class="dow">${x}</span>`).join("") + "<span></span>".repeat(first.getDay());
+  for (let i = 1; i <= days; i++) {
+    const v = localDate(new Date(DTP.y, DTP.m, i));
+    h += `<button type="button" data-day="${v}" class="${v === sel ? "on" : ""} ${v === today ? "today" : ""}" ${v < today ? "disabled" : ""}>${i}</button>`;
+  }
+  $("#dtpDays").innerHTML = h;
+  const t = $("#startTime").value, ct = curTime();
+  if (document.activeElement !== $("#dtpH")) $("#dtpH").value = t ? String(ct.h % 12 || 12) : "";
+  if (document.activeElement !== $("#dtpM")) $("#dtpM").value = t ? ct.m : "";
+  $("#dtpAp").textContent = ct.h >= 12 ? "PM" : "AM";
+}
+const curTime = () => { const t = $("#startTime").value || "00:00"; return {h: +t.slice(0,2), m: t.slice(3)}; };
+const fmtT = (h, m) => `${String(h).padStart(2,"0")}:${m}`;
+function dtpOpen(open) {
+  $("#dtpPop").hidden = !open; $("#dtpBtn").classList.toggle("open", open);
+  if (!open) return;
+  const base = $("#startDate").value ? new Date($("#startDate").value + "T00:00") : new Date();
+  DTP.y = base.getFullYear(); DTP.m = base.getMonth(); dtpRender(); dtpPlace();
+}
+// Floats over the page (the Setup column clips anything inside it): below the box if it fits, else above, always on screen
+function dtpPlace() {
+  const pop = $("#dtpPop"); if (pop.hidden) return;
+  const r = $("#dtpBtn").getBoundingClientRect(), vw = innerWidth, vh = innerHeight;
+  const w = Math.min(Math.max(r.width, 300), vw - 16); pop.style.width = w + "px";
+  const h = pop.offsetHeight;
+  let top = r.bottom + 6;
+  if (top + h > vh - 8) top = r.top - 6 - h >= 8 ? r.top - 6 - h : Math.max(8, vh - 8 - h);
+  pop.style.top = top + "px"; pop.style.left = Math.min(Math.max(8, r.left), vw - 8 - w) + "px";
+}
+addEventListener("resize", dtpPlace);
+document.addEventListener("scroll", dtpPlace, true);
+$("#dtpBtn").onclick = () => dtpOpen($("#dtpPop").hidden);
+$("#dtpPrev").onclick = () => { if (--DTP.m < 0) { DTP.m = 11; DTP.y--; } dtpRender(); };
+$("#dtpNext").onclick = () => { if (++DTP.m > 11) { DTP.m = 0; DTP.y++; } dtpRender(); };
+$("#dtpDays").onclick = e => { const b = e.target.closest("[data-day]"); if (b) setStart(b.dataset.day); };
+// Facebook-style: type the hour and minutes (or ↑ ↓), click AM/PM to flip it
+const isPM = () => curTime().h >= 12;
+function setHour(x) { x = ((x - 1) % 12 + 12) % 12 + 1; setStart(undefined, fmtT(x % 12 + (isPM() ? 12 : 0), curTime().m)); }
+function setMin(x) { x = (x % 60 + 60) % 60; setStart(undefined, fmtT(curTime().h, String(x).padStart(2,"0"))); }
+$("#dtpH").oninput = e => { const v = e.target.value.replace(/\D/g, ""); e.target.value = v; const n = +v;
+  if (v && n >= 1 && n <= 12) { setHour(n); if (v.length === 2 || n > 1) { $("#dtpM").focus(); $("#dtpM").select(); } } };
+$("#dtpM").oninput = e => { const v = e.target.value.replace(/\D/g, ""); e.target.value = v; if (v && +v <= 59) setMin(+v); };
+$("#dtpH").onkeydown = e => { if (e.key === "ArrowUp" || e.key === "ArrowDown") { e.preventDefault(); setHour((curTime().h % 12 || 12) + (e.key === "ArrowUp" ? 1 : -1)); $("#dtpH").value = String(curTime().h % 12 || 12); } };
+$("#dtpM").onkeydown = e => { if (e.key === "ArrowUp" || e.key === "ArrowDown") { e.preventDefault(); setMin(+curTime().m + (e.key === "ArrowUp" ? 1 : -1)); $("#dtpM").value = curTime().m; }
+  if (e.key === "Enter") dtpOpen(false); };
+[$("#dtpH"), $("#dtpM")].forEach(el => { el.onfocus = () => el.select(); el.onblur = () => dtpRender(); });
+$("#dtpAp").onclick = () => { const {h, m} = curTime(); setStart(undefined, fmtT((h + 12) % 24, m)); };
+$("#dtpClear").onclick = () => { setStart("", ""); dtpOpen(false); };
+$("#dtpDone").onclick = () => dtpOpen(false);
+document.addEventListener("mousedown", e => { if (!$("#dtpPop").hidden && !e.target.closest("#dtp")) dtpOpen(false); });
+document.addEventListener("keydown", e => { if (e.key === "Escape" && !$("#dtpPop").hidden) dtpOpen(false); });
+$("#midnight").onclick = () => {
+  const d = new Date(); d.setDate(d.getDate() + 1);
+  $("#startDate").value = localDate(d);
+  $("#startTime").value = "00:00"; startHint();
+};
+$("#noStart").onclick = () => { $("#startDate").value = ""; $("#startTime").value = ""; startHint(); };
+startHint();
+// Open the landing page as the ad will send people there (URL + UTM tags)
+function urlOpen() {
+  let u = $("#url").value.trim(), a = $("#urlOpen");
+  if (u && !/^https?:\/\//i.test(u)) u = "https://" + u;
+  let ok = false; try { ok = !!new URL(u).hostname.includes("."); } catch {}
+  a.hidden = !ok; if (!ok) return;
+  const t = $("#tags").value.trim().replace(/^[?&]+/, "");
+  a.href = t ? u + (u.includes("?") ? "&" : "?") + t : u;
+}
+["#url", "#tags"].forEach(id => { $(id).addEventListener("input", urlOpen); $(id).addEventListener("change", urlOpen); });
+// ---------- UTM tags ----------
+// Tidy the obvious slips (leading "?", spaces, a pasted full URL) and say what's still wrong.
+function tagsCheck() {
+  const el = $("#tags"); let v = el.value.trim();
+  if (v.includes("?")) v = v.slice(v.indexOf("?") + 1);
+  v = v.replace(/\s+/g, "").replace(/^&+|&+$/g, "");
+  if (v !== el.value) el.value = v;
+  const bad = v ? v.split("&").filter(p => !/^[\w.-]+=[^=&]*$/.test(p)) : [];
+  $("#tagsHint").textContent = bad.length ? `Doesn't look right: ${bad.join(", ")}. Each part should be name=value, joined with &.` : "";
+  $("#tagsHint").style.color = bad.length ? "var(--red)" : "";
+}
+$("#tags").addEventListener("change", () => { tagsCheck(); saveFields(); });
+$("#tagsStd").onclick = () => { $("#tags").value = "utm_source=facebook&utm_medium=paid"; tagsCheck(); saveFields(); urlOpen(); };
+
+// ---------- copy ----------
+// Lines already in the library show a tag under them (Proven / Testing / Failed before), so a loser isn't relaunched by accident.
+const norm = t => (t || "").split(/\s+/).join(" ").trim();
+const LABEL = {testing:"Testing", proven:"✓ Proven", failed:"✗ Failed before"};
+function libLine(k, t) { const v = norm(t), prod = product(); return v ? S.lib.find(x => x.kind === k && x.product === prod && norm(x.text) === v) || null : null; }
+function footHtml(k, t) {
+  const x = libLine(k, t); if (!x) return "";
+  const n = (x.launches || []).length;
+  return `<span class="tag ${x.status}">${LABEL[x.status]}</span><span title="${esc(x.result || "")}" style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(x.result || (n ? `ran in ${n} launch${n > 1 ? "es" : ""}` : ""))}</span>`;
+}
+function lineHtml(k, t, i, src) {
+  const a = src === "main" ? `data-copy="${k}"` : `data-ecopy="${k}"`;
+  return `<div class="var"><div>${k === "p"
+      ? `<textarea ${a} data-i="${i}" placeholder="Primary text ${i+1}">${esc(t)}</textarea>`
+      : `<input ${a} data-i="${i}" value="${esc(t)}" placeholder="Headline ${i+1}">`}
+    <div class="lfoot" data-foot="${src}.${k}.${i}">${footHtml(k, t)}</div></div>
+    ${(src === "main" ? S.copy : S.edit)[k].length > 1 ? `<button class="icon" ${src === "main" ? "data-rm" : "data-crm"}="${k}" data-i="${i}" title="Remove from this launch (the library keeps it)">✕</button>` : ""}</div>`;
+}
+function updFoot(t) {
+  const src = t.dataset.copy ? "main" : "edit", k = t.dataset.copy || t.dataset.ecopy;
+  const f = document.querySelector(`[data-foot="${src}.${k}.${t.dataset.i}"]`); if (f) f.innerHTML = footHtml(k, t.value);
+}
+function renderCopy() {
+  for (const k of ["p","h"]) {
+    const list = S.copy[k];
+    $(`#${k}List`).innerHTML = list.map((t,i) => lineHtml(k, t, i, "main")).join("");
+    $(`#${k}Count`).textContent = `${list.length} of ${MAX}`;
+    document.querySelector(`[data-add="${k}"]`).disabled = list.length >= MAX;
+  }
+  $("#desc").value = S.copy.d;
+  renderOverrides();
+}
+// Ad sets with their own primary text / headlines ignore those lines here. Say so, and offer to copy the lines across.
+function renderOverrides() {
+  for (const k of ["p","h"]) {
+    const own = S.sets.filter(s => s.copy && s.copy[k]);
+    const word = k === "p" ? "primary text" : "headlines";
+    const mine = S.copy[k].filter(x => x.trim());
+    const missing = own.filter(s => mine.some(x => !s.copy[k].some(v => v.trim() === x.trim())));
+    $(`#${k}Over`).innerHTML = own.length
+      ? `⚠ <b>Not used by ${own.length} ad set${own.length > 1 ? "s" : ""}</b> (${own.map(s => esc(s.name)).join(", ")}): ${own.length > 1 ? "they have" : "it has"} ${own.length > 1 ? "their" : "its"} own ${word} under ✎ Copy, so lines added here don't reach ${own.length > 1 ? "them" : "it"}.`
+        + (missing.length ? `<br><button data-pushcopy="${k}">Also add these ${word} to ${missing.length > 1 ? "those ad sets" : "that ad set"}</button>` : `<br>✓ All lines here are already in ${own.length > 1 ? "them" : "it"}.`)
+      : "";
+  }
+}
+document.addEventListener("click", e => {
+  const b = e.target.closest?.("[data-pushcopy]"); if (!b) return;
+  const k = b.dataset.pushcopy, mine = S.copy[k].filter(x => x.trim()); let full = [];
+  S.sets.filter(s => s.copy && s.copy[k]).forEach(s => {
+    for (const x of mine) {
+      if (s.copy[k].some(v => v.trim() === x.trim())) continue;
+      const empty = s.copy[k].findIndex(v => !v.trim());
+      if (empty >= 0) s.copy[k][empty] = x; else if (s.copy[k].length < MAX) s.copy[k].push(x); else { full.push(s.name); break; }
+    }
+  });
+  renderCopy(); render(); saveDraft();
+  if (full.length) alert(`Already ${MAX} in: ${[...new Set(full)].join(", ")}. Remove one there under ✎ Copy to add more.`);
+});
+document.addEventListener("input", e => {
+  const t = e.target;
+  if (t.dataset.copy) { S.copy[t.dataset.copy][+t.dataset.i] = t.value; renderOverrides(); updFoot(t); }
+  if (t.id === "desc") S.copy.d = t.value;
+  if (t.dataset.ecopy) { S.edit[t.dataset.ecopy][+t.dataset.i] = t.value; updFoot(t); }
+  if (t.dataset.nf) {
+    const s = setByKey(t.dataset.key), f = t.dataset.nf;
+    s.n[f] = AUTO[f] && t.value.trim() === AUTO[f](s) ? "" : t.value;   // typing the automatic value back = automatic again
+    refreshName(s);
+    s.items.forEach(id => { const nm = document.querySelector(`.nm[data-id="${id}"]`); if (nm) nm.textContent = adName(id, s.key); });
+  }
+  if (t.dataset.opt) {
+    const s = setByKey(t.dataset.key); s[t.dataset.opt] = t.value; refreshChips(s);
+    if (t.dataset.opt === "daily_budget") budgetUI();
+    if (t.dataset.opt === "link_url") refreshName(s);
+  }
+});
+document.addEventListener("click", e => {
+  const t = e.target.closest("button"); if (!t) return;
+  if (t.dataset.ctryRm) { const s = setByKey(t.dataset.key); s.countries = ctryList(s).filter(c => c !== t.dataset.ctryRm).join(","); render(); return; }
+  if (t.dataset.add) { S.copy[t.dataset.add].push(""); renderCopy(); }
+  if (t.dataset.rm) { S.copy[t.dataset.rm].splice(+t.dataset.i, 1); renderCopy(); }
+  if (t.dataset.cadd) { S.edit[t.dataset.cadd].push(""); renderEdit(); }
+  if (t.dataset.crm) { S.edit[t.dataset.crm].splice(+t.dataset.i, 1); renderEdit(); }
+  if (t.dataset.act) setAction(t.dataset.act, t.dataset.key, t.dataset.id);
+});
+// close an open ⋯ menu when clicking anywhere else
+document.addEventListener("click", e => document.querySelectorAll("details.more[open]").forEach(d => { if (!d.contains(e.target)) d.open = false; }));
+// ---------- copy library ----------
+function product() {   // the campaign's product = its name before "//", e.g. "Glow Serum//CBO" -> "Glow Serum"
+  const c = camp(), n = c ? c.name : $("#campName").value;
+  return (n || "").split("//")[0].trim();
+}
+function libBox() { return S.libTarget === "edit" ? S.edit : S.copy; }
+const HINTS = {
+  testing: "Every line you launch lands here, grouped by the launch it last ran in. Once the results are in, mark each one <b>✓ Proven</b> or <b>✗ Failed</b>.",
+  proven: "Lines that earned their place. <b>+ Use</b> adds one to the copy you're editing.",
+  failed: "Lines that lost or got no spend. Kept so you don't rerun them by accident (the editor flags them). 🗑 deletes one for good."};
+const kindName = k => k === "p" ? "Primary text" : "Headline";
+function libRow(x, all) {
+  const inUse = libBox()[x.kind].some(v => norm(v) === norm(x.text)), n = (x.launches || []).length;
+  const meta = [all && x.product, x.angle, x.result, n && `ran in ${n} launch${n > 1 ? "es" : ""}`, x.last_used && "last " + x.last_used].filter(Boolean).join(" · ");
+  const acts = {
+    testing: `<button class="ok" data-libst="${x.id}" data-to="proven">✓ Proven</button><button class="no" data-libst="${x.id}" data-to="failed">✗ Failed</button>`,
+    proven: `<button class="no" data-libst="${x.id}" data-to="failed" title="Stopped working">✗ Failed</button>`,
+    failed: `<button data-libst="${x.id}" data-to="testing" title="Give it another go">↩ Testing</button><button data-libdel="${x.id}" title="Delete from the library for good">🗑 Delete</button>`}[x.status];
+  return `<div class="lib ${x.status}"><span class="k">${kindName(x.kind)}</span>
+    <div style="flex:1;min-width:0"><div class="lt">${esc(x.text)}</div><div class="lm">${esc(meta)}</div></div>
+    <div class="acts">${x.status !== "failed" ? `<button data-libuse="${x.id}" ${inUse ? "disabled" : ""}>${inUse ? "In use" : "+ Use"}</button>` : ""}${acts}</div></div>`;
+}
+function renderLib() {
+  const prod = product(), all = $("#libAll").checked;
+  const mine = S.lib.filter(x => all || x.product === prod);
+  if (!S.libTab) S.libTab = mine.some(x => x.status === "testing") ? "testing" : "proven";
+  const tab = S.libTab;
+  $("#libProduct").textContent = all ? "all products" : (prod || "no campaign picked");
+  document.querySelectorAll("#libTabs button").forEach(b => b.classList.toggle("on", b.dataset.tab === tab));
+  for (const st of ["testing","proven","failed"]) $(`#tn${st}`).textContent = mine.filter(x => x.status === st).length;
+  $("#libHint").innerHTML = HINTS[tab];
+  const rows = mine.filter(x => x.status === tab)
+    .sort((a,b) => (b.last_used || b.added || "").localeCompare(a.last_used || a.added || "") || a.kind.localeCompare(b.kind));
+  if (!rows.length) { $("#libBody").innerHTML = `<div class="hint" style="margin-top:12px">Nothing here${tab === "testing" ? ": all your launched copy has a verdict" : ""}.</div>`; return; }
+  if (tab !== "testing") { $("#libBody").innerHTML = rows.map(x => libRow(x, all)).join(""); return; }
+  const groups = new Map();   // group Testing by the launch each line last ran in
+  const HAND = "Saved by hand (no launch on record)";
+  for (const x of rows) { const g = (x.launches || []).slice(-1)[0] || HAND; if (!groups.has(g)) groups.set(g, []); groups.get(g).push(x); }
+  const order = [...groups].sort(([a], [b]) => (a === HAND) - (b === HAND));
+  order.forEach(([, xs]) => xs.sort((a, b) => b.kind.localeCompare(a.kind)));   // primary texts before headlines
+  $("#libBody").innerHTML = order.map(([g, xs]) => `<div class="lgroup"><h3>${esc(g)}</h3>${xs.map(x => libRow(x, all)).join("")}</div>`).join("");
+}
+async function loadPast() { try { S.past = await api("/api/past-copy"); } catch (e) { S.past = []; alert(e.message); } return S.past; }
+function openLib(target) { S.libTarget = target; S.libTab = null; renderLib(); $("#libDlg").showModal(); }
+$("#openLib").onclick = () => openLib("main");
+$("#libClose").onclick = () => $("#libDlg").close();
+$("#libAll").onchange = renderLib;
+$("#libTabs").onclick = e => { const b = e.target.closest("[data-tab]"); if (b) { S.libTab = b.dataset.tab; renderLib(); } };
+async function libApi(body) {
+  try { S.lib = await api("/api/copy-library", {method:"POST", json:body}); refreshCopyViews(); return true; } catch (e) { alert(e.message); return false; }
+}
+function refreshCopyViews() { renderCopy(); if ($("#copyDlg").open) renderEdit(); if ($("#libDlg").open) renderLib(); }
+function afterUse() { S.libTarget === "edit" ? renderEdit() : (renderCopy(), render(), saveDraft()); if ($("#libDlg").open) renderLib(); }
+function addLine(k, text) {
+  const list = libBox()[k], empty = list.findIndex(v => !v.trim());
+  if (empty >= 0) list[empty] = text; else if (list.length < MAX) list.push(text); else return alert(`Already ${MAX}. Remove one first.`);
+  afterUse();
+}
+// A yes/no question in the app's own look (replaces the browser's "127.0.0.1 says" box). Resolves true only on the
+// confirm button; Cancel, Esc and a click outside all mean no. Cancel has the focus, so Enter never confirms by accident.
+function ask(title, text, {yes = "OK", danger = false} = {}) {
+  return new Promise(done => {
+    const d = $("#askDlg"), y = $("#askYes");
+    $("#askTitle").textContent = title; $("#askText").textContent = text || ""; $("#askText").hidden = !text;
+    y.textContent = yes; y.className = danger ? "danger" : "primary";
+    let over = false;
+    const finish = v => { if (over) return; over = true; if (d.open) d.close(); done(v); };   // answers once, whichever way it closes
+    y.onclick = () => finish(true);
+    $("#askNo").onclick = () => finish(false);
+    d.onclick = e => { if (e.target === d) finish(false); };
+    d.oncancel = d.onclose = () => finish(false);   // Esc
+    d.showModal(); $("#askNo").focus();
+  });
+}
+async function useSet(st, label) {
+  const box = libBox(), has = [...box.p, ...box.h, box.d].some(v => (v || "").trim());
+  if (has && !await ask("Replace the copy you're editing?", `It will be replaced with the copy from ${label}.`, {yes:"Replace"})) return;
+  box.p = st.p.length ? [...st.p] : [""]; box.h = st.h.length ? [...st.h] : [""]; box.d = st.d || "";
+  afterUse();
+}
+async function reuseLast(target) {
+  S.libTarget = target;
+  const past = await loadPast(); if (!past.length) return alert("No past launches found.");
+  const L = past[0];
+  if (L.sets.length > 1) alert(`${L.name} used ${L.sets.length} different copy sets. Taking the one most ads used.`);
+  useSet(L.sets[0], L.name);
+}
+$("#reuseLast").onclick = () => reuseLast("main");
+$("#cReuse").onclick = () => reuseLast("edit");
+document.addEventListener("click", async e => {
+  const b = e.target.closest?.("[data-libst]");
+  if (b) return libApi({action:"status", id:b.dataset.libst, status:b.dataset.to});
+  const d = e.target.closest?.("[data-libdel]");
+  if (d) { if (await ask("Delete this line for good?", "It is removed from the copy library and can't be brought back.", {yes:"Delete", danger:true})) await libApi({action:"delete", id:d.dataset.libdel}); return; }
+  const u = e.target.closest?.("[data-libuse]");
+  if (u) { const x = S.lib.find(l => l.id === u.dataset.libuse); return addLine(x.kind, x.text); }
+});
+document.addEventListener("click", e => {
+  const m = e.target.closest?.("[data-nm]"); if (!m) return;
+  const c = S.cr[m.dataset.nm], v = prompt("Ad name for this ad (blank = back to the automatic name):", c.adName || m.textContent);
+  if (v === null) return; c.adName = (!c.adName && v.trim() === m.textContent.trim()) ? "" : v.trim(); render(); saveDraft();
+});
+
+// ---------- creatives ----------
+function addFiles(list) {
+  const placed = new Set([...S.ung, ...S.sets.flatMap(s => s.items)]);
+  const alts = new Set(Object.values(S.cr).filter(c => c.alt).map(c => c.alt.id));   // already riding along as a 9:16
+  for (const f of list) {
+    if (alts.has(f.id)) continue;
+    if (!S.cr[f.id]) S.cr[f.id] = {...f, adName:null, copy:null}; else Object.assign(S.cr[f.id], {w:f.w, h:f.h, shape:f.shape});
+    if (!placed.has(f.id)) S.ung.push(f.id);
+  }
+  autoPair(); render();
+}
+// ---------- 1:1 + 9:16 pairs ----------
+// A static made in two shapes launches as ONE ad: the feed image (1:1 or 4:5) in feeds, the tall one in Stories and Reels.
+// Which is which comes from the image's real shape. File names only decide who belongs with whom, after size words are dropped.
+const SIZE_WORDS = /(?<![a-z0-9])(1x1|1-1|1_1|1by1|9x16|9-16|9_16|9by16|916|4x5|4-5|4_5|1080x1080|1080x1920|1080x1350|\d{3,4}x\d{3,4}|square|sq|vertical|vert|portrait|story|stories|reel|reels|feed|tall)(?![a-z0-9])/gi;
+const pairStemOf = c => c.stem.replace(SIZE_WORDS, "").replace(/[\s._-]{2,}/g, m => m[0]).replace(/^[\s._-]+|[\s._-]+$/g, "");
+const pairToks = c => pairStemOf(c).toLowerCase().split(/[^a-z0-9]+/).filter(Boolean);
+const inUse = () => [...S.ung, ...S.sets.flatMap(s => s.items)];
+const loose = shape => inUse().filter(id => { const c = S.cr[id]; return c && c.kind === "image" && !c.alt && c.shape === shape; });
+function pairUp(feedId, tallId) {
+  const f = S.cr[feedId], t = S.cr[tallId];
+  f.alt = {id:t.id, name:t.name, stem:t.stem, path:t.path, size:t.size, kind:t.kind, w:t.w, h:t.h, shape:t.shape};
+  f.pairStem = pairStemOf(f); delete f.solo;
+  delete S.cr[tallId]; S.sel.delete(tallId);
+  S.ung = S.ung.filter(i => i !== tallId); S.sets.forEach(s => s.items = s.items.filter(i => i !== tallId));
+}
+function autoPair() {
+  const free = shape => loose(shape).filter(id => !S.cr[id].solo && !(shape === "tall" && (S.cr[id].copy || S.cr[id].adName)));
+  // 1) same name once the size words are gone, and exactly one of each shape
+  const groups = {};
+  for (const shape of ["feed", "tall"]) for (const id of free(shape)) ((groups[pairToks(S.cr[id]).join(" ")] ||= {feed:[], tall:[]})[shape]).push(id);
+  for (const g of Object.values(groups)) if (g.feed.length === 1 && g.tall.length === 1) pairUp(g.feed[0], g.tall[0]);
+  // 2) one name continues the other (A10-v2-1x1 + A10-9x16), and there's no other candidate either way
+  const starts = (a, b) => { const [x, y] = a.length <= b.length ? [a, b] : [b, a]; return x.length > 0 && x.every((t, i) => y[i] === t); };
+  const cand = (id, pool) => pool.filter(o => starts(pairToks(S.cr[id]), pairToks(S.cr[o])));
+  for (const t of free("tall")) { const fs = cand(t, free("feed")); if (fs.length === 1 && cand(fs[0], free("tall")).length === 1) pairUp(fs[0], t); }
+}
+function splitPair(id) {
+  const c = S.cr[id], t = c.alt; if (!t) return;
+  delete c.alt; delete c.pairStem; c.solo = true;   // solo: don't re-pair these two automatically
+  S.cr[t.id] = {...t, adName:null, copy:null, solo:true};
+  const home = S.sets.find(s => s.items.includes(id));
+  const list = home ? home.items : S.ung; list.splice(list.indexOf(id) + 1, 0, t.id);
+  render();
+}
+function pairChoice() {   // the two selected images, if they can be one ad: [feedId, tallId]
+  if (S.sel.size !== 2) return null;
+  const [a, b] = [...S.sel].map(id => S.cr[id]);
+  if (!a || !b || a.kind !== "image" || b.kind !== "image" || a.alt || b.alt) return null;
+  return a.shape === "tall" && b.shape !== "tall" ? [b.id, a.id] : b.shape === "tall" && a.shape !== "tall" ? [a.id, b.id] : null;
+}
+$("#pairSel").onclick = () => { const p = pairChoice(); if (p) { pairUp(p[0], p[1]); S.sel.clear(); render(); } };
+$("#loadFolder").onclick = async () => {
+  const b = $("#loadFolder"); b.disabled = true; b.textContent = "Loading…";
+  const f = $("#folder").value.trim();
+  try { addFiles(await api("/api/scan", {method:"POST", json:{folder: f}})); banner(""); $("#folderLoaded").value = f; $("#folder").value = ""; showFolder(f); saveDraft(); }
+  catch (e) { banner(e.message); }
+  b.disabled = false; b.textContent = "Load";
+};
+function showFolder(f) {   // f is a folder path, or a label from a multi-pick ("3 folders: …", "4 files from …")
+  $("#folderShown").textContent = !f ? "" : f.startsWith("/") || f.startsWith("~") ? `Loaded from ${f.replace(/\/$/, "").split("/").slice(-2).join("/")}` : `Loaded ${f}`;
+}
+// What a Finder pick added, in one line: "Loaded from b12/finals", "Loaded 3 folders: …", "Loaded 4 videos from b12/finals"
+function pickedLabel(paths, kind) {
+  const short = x => x.replace(/\/$/, "").split("/").slice(-2).join("/");
+  if (kind === "folders") return paths.length === 1 ? paths[0] : `${paths.length} folders: ${paths.map(x => x.replace(/\/$/, "").split("/").pop()).join(", ")}`;
+  const dirs = [...new Set(paths.map(x => x.replace(/\/[^/]*$/, "")))];
+  return `${paths.length} file${paths.length > 1 ? "s" : ""} from ${dirs.length === 1 ? short(dirs[0]) : dirs.length + " folders"}`;
+}
+async function pickFinder(kind) {
+  const b = $(kind === "folders" ? "#pickFolder" : "#pickFiles"), label = b.textContent;
+  $("#pickFolder").disabled = $("#pickFiles").disabled = true; b.textContent = "Pick in the Finder window…";
+  try {
+    const r = await api("/api/pick", {method:"POST", json:{kind}});
+    if (r.paths.length) {
+      const l = pickedLabel(r.paths, kind);
+      $("#folderLoaded").value = l; addFiles(r.files); saveDraft();
+      showFolder(l);
+      banner(r.problems.length ? `Skipped: ${r.problems.join("; ")}` : "");
+    }
+  } catch (e) { banner(e.message); }
+  $("#pickFolder").disabled = $("#pickFiles").disabled = false; b.textContent = label;
+}
+$("#pickFolder").onclick = () => pickFinder("folders");
+$("#pickFiles").onclick = () => pickFinder("files");
+const drop = $("#drop");
+drop.addEventListener("dragover", e => { if (e.dataTransfer.types.includes("Files")) { e.preventDefault(); drop.classList.add("over"); } });
+drop.addEventListener("dragleave", () => drop.classList.remove("over"));
+drop.addEventListener("drop", async e => {
+  e.preventDefault(); drop.classList.remove("over");
+  const files = [...e.dataTransfer.files]; let n = 0; const got = [];
+  for (const f of files) {
+    drop.textContent = `Copying ${++n} of ${files.length}: ${f.name}`;
+    try { got.push(await api(`/api/drop?session=${session}&name=${encodeURIComponent(f.name)}`, {method:"PUT", body:f})); }
+    catch (err) { banner(`${f.name}: ${err.message}`); }
+  }
+  drop.textContent = "Or drag image/video files here";
+  got.sort((a,b) => a.name.localeCompare(b.name, undefined, {numeric:true}));
+  addFiles(got);
+});
+
+// ---------- ad sets ----------
+function newSet(name) {
+  const s = {key: String(S.nextKey++), mode:"new", id:"", name: "", n: {},
+             countries:"", age_min:18, age_max:65, gender:"all", page:"", cta:"", link_url:"", daily_budget:"", copy:null, items:[], open:false};
+  S.sets.push(s); return s;
+}
+const setByKey = k => S.sets.find(s => s.key === k);
+$("#addSet").onclick = () => { newSet().open = true; render(); };
+// open ad set panels show the setup's Page, CTA and URL, so keep them current when those change
+["#page", "#cta"].forEach(id => $(id).addEventListener("change", () => render()));
+$("#url").addEventListener("input", () => S.sets.forEach(refreshName));
+document.addEventListener("focusout", e => { const t = e.target; if (t.dataset && t.dataset.nf) setTimeout(() => { const s = setByKey(t.dataset.key); if (s) refreshName(s); }); });
+$("#url").addEventListener("input", () => document.querySelectorAll('[data-opt="link_url"]').forEach(el => el.placeholder = $("#url").value.trim() ? "Same as setup: " + $("#url").value.trim() : "Same as setup (no URL yet)"));
+$("#foldAll").onclick = () => { const f = !S.sets.every(s => s.fold); S.sets.forEach(s => s.fold = f); render(); };
+function moveIds(ids, key) {
+  S.ung = S.ung.filter(i => !ids.includes(i));
+  S.sets.forEach(s => s.items = s.items.filter(i => !ids.includes(i)));
+  (key ? setByKey(key).items : S.ung).push(...ids);
+  S.sel.clear(); S.lastPick = null; render();
+}
+function setAction(act, key, id) {
+  const s = key && setByKey(key);
+  if (act === "gear") { s.open = !s.open; render(); }
+  if (act === "fold") { s.fold = !s.fold; render(); }
+  if (act === "dup") { const c = newSet(); Object.assign(c, {...s, key:c.key, n: {...s.n}, name: s.name, items:[], mode:"new", id:"", fold:false, copy: s.copy && structuredClone(s.copy)}); render(); }
+  if (act === "del") { S.ung.push(...s.items); S.sets = S.sets.filter(x => x !== s); render(); }
+  if (act === "unset") moveIds([id], "");
+  if (act === "remove") { S.ung = S.ung.filter(i => i !== id); render(); }
+  if (act === "edit") openEdit(id);
+  if (act === "split") splitPair(id);
+  if (act === "setcopy") openSetEdit(key);
+}
+// An ad set's copy only stores what differs from the batch copy, so unchanged fields keep following the batch.
+function setCopy(s) { const o = (s && s.copy) || {}; return {p: o.p || S.copy.p, h: o.h || S.copy.h, d: o.d ?? S.copy.d}; }
+const ctaLabel = c => c.charAt(0) + c.slice(1).replaceAll("_", " ").toLowerCase();
+function chipsHtml(s) {
+  const pg = s.page && S.pages.find(p => p.id === s.page);
+  const ownCopy = (s.cta ? `<span class="chip">${esc(ctaLabel(s.cta))}</span>` : "") ;
+  if (s.mode === "existing") { const a = S.adsetsOfCampaign.find(x => x.id === s.id); return `<span class="chip">existing ad set${a ? " · " + esc(a.status.toLowerCase()) : ""}</span>` + (pg ? `<span class="chip">${esc(pg.name)}</span>` : "") + ownCopy; }
+  const b = isAbo() && setBudgetOf(s), bud = isAbo() ? `<span class="chip" ${b ? "" : 'style="color:var(--warn-ink)"'}>${b ? esc(b) + " " + S.cur + "/day" : "no budget"}</span>` : "";
+  const g = s.gender === "female" ? "Women" : s.gender === "male" ? "Men" : "All genders";
+  return `<span class="chip">${esc(s.age_min)}–${s.age_max >= 65 ? "65+" : esc(s.age_max)}</span><span class="chip">${g}</span>${!ctryList(s).length ? `<span class="chip" style="color:var(--warn-ink)">no countries</span>` : ""}<span class="chip" ${ctryList(s).length ? "" : "hidden"} title="${esc(ctryList(s).map(ctryName).join(", "))}">${esc(ctryList(s).length > 3 ? ctryList(s).slice(0,3).join(", ") + " +" + (ctryList(s).length - 3) : ctryList(s).map(c => ctryList(s).length === 1 ? ctryName(c) : c).join(", "))}</span>` +
+         bud + (pg ? `<span class="chip">${esc(pg.name)}</span>` : "") + (s.link_url ? `<span class="chip">own URL</span>` : "") + ownCopy;
+}
+function refreshChips(s) { const el = document.querySelector(`[data-chips="${s.key}"]`); if (el) el.innerHTML = chipsHtml(s); }
+function crHtml(id, key) {
+  const c = S.cr[id], own = (c.adName || "").trim();
+  const nameLine = key ? `<small class="nm ${own ? "own" : ""}" data-nm="${id}" data-id="${id}" title="Ad name in Ads Manager. Click to type your own">${esc(adName(id, key))}</small>` : "";
+  return `<div class="cr ${S.sel.has(id) ? "sel" : ""}" draggable="true" data-id="${id}">
+    <input type="checkbox" data-pick="${id}" ${S.sel.has(id) ? "checked" : ""}>
+    <img ${c.alt ? 'class="sq"' : ""} data-pv="${id}" title="Click to preview" src="/api/thumb?id=${id}&profile=${S.profile}" loading="lazy" onerror="this.outerHTML='<div class=ph></div>'">
+    ${c.alt ? `<img class="alt" data-pv="${id}" src="/api/thumb?id=${c.alt.id}&profile=${S.profile}" loading="lazy" title="${esc(c.alt.name)} · click to preview" onerror="this.outerHTML='<div class=ph></div>'">` : ""}
+    <div class="meta"><b title="${esc(c.alt ? c.name + " + " + c.alt.name : c.name)}">${esc(c.alt ? (c.pairStem || c.stem) : c.name)}</b>${nameLine}</div>
+    ${c.alt ? `<span class="chip b" title="One ad, two images. Feeds show ${esc(c.name)}; Stories and Reels show ${esc(c.alt.name)}">1:1 + 9:16</span>`
+      : c.kind === "image" && c.shape === "tall" ? `<span class="chip w" title="A tall image with no square partner. On its own it gets cropped in feeds. Select it and its square version, then Pair selected">9:16 only</span>`
+      : c.kind === "image" && S.anyPairs ? `<span class="chip" title="No 9:16 partner, so Stories and Reels show this image with bars around it">no 9:16</span>` : ""}
+    ${c.copy ? `<span class="chip b" title="This ad has its own primary text / headline">own copy</span>` : ""}
+    <div class="racts">
+      ${c.alt ? `<button class="icon ghost" data-act="split" data-id="${id}" title="Split into two separate images">⇄</button>` : ""}
+      <button class="icon ghost" data-act="edit" data-id="${id}" title="Copy for this ad only">✎</button>
+      ${key ? `<button class="icon ghost" data-act="unset" data-id="${id}" title="Back to ungrouped">↩</button>`
+            : `<button class="icon ghost" data-act="remove" data-id="${id}" title="Remove from this batch">✕</button>`}
+    </div>
+  </div>`;
+}
+function render() {
+  S.sets.forEach(s => { if (s.mode !== "existing") s.name = joinName(s); });
+  if (typeof renderOverrides === "function") renderOverrides();
+  S.order = launchOrder();
+  const nPairs = inUse().filter(id => S.cr[id] && S.cr[id].alt).length, nTall = loose("tall").length;
+  S.anyPairs = nPairs > 0;
+  const pc = pairChoice();
+  $("#pairSel").hidden = !pc;
+  $("#pairNote").hidden = !nPairs && !nTall;
+  $("#pairNote").innerHTML = (nPairs ? `<b>${nPairs}</b> ad${nPairs === 1 ? "" : "s"} paired as 1:1 + 9:16 (one ad, two images). ` : "")
+    + (nTall ? `<span style="color:var(--warn-ink)">${nTall} tall image${nTall === 1 ? " has" : "s have"} no square partner.</span> Tick it and its square version, then click <b>Pair selected</b>.` : "");
+  const isNew = $("#campaign").value === "__new", needBudget = isAbo();
+  budgetUI();
+  $("#sets").innerHTML = S.sets.map(s => `<div class="set ${s.fold ? "folded" : ""}">
+    <div class="shead">
+      <button class="fold" data-act="fold" data-key="${s.key}" title="${s.fold ? "Expand" : "Collapse"}">${s.fold ? "▸" : "▾"}</button>
+      ${s.mode === "existing"
+        ? `<select data-opt="id" data-key="${s.key}" class="sname">${S.adsetsOfCampaign.map(a => `<option value="${a.id}" ${a.id===s.id?"selected":""}>${esc(a.name)}</option>`).join("")}</select>`
+        : `<div class="sfull ${s.name ? "" : "none"}" data-key="${s.key}" title="Ad set name in Ads Manager">${esc(s.name || "Fill in the boxes below")}</div>`}
+      <span class="count">${s.items.length} ad${s.items.length===1?"":"s"}</span>
+      ${s.fold ? `<div class="chips" data-chips="${s.key}">${chipsHtml(s)}</div>` : ""}
+      <details class="more"><summary class="icon ghost" title="More">⋯</summary><div class="menu">
+        <button data-act="dup" data-key="${s.key}">Duplicate ad set</button>
+        <button data-act="del" data-key="${s.key}" class="no">Delete ad set</button></div></details>
+    </div>
+    ${s.fold || s.mode === "existing" ? "" : `<div class="nbox">${NF.map(f => `<label>${NF_LABEL[f]}${AUTO[f] ? ` <span class="atag" title="Filled in from this ad set's settings. Type to change it" ${isAuto(s, f) ? "" : "hidden"}>auto</span>` : ""}<input data-nf="${f}" data-key="${s.key}" value="${esc(nval(s, f))}" autocomplete="off"></label>`).join("")}</div>`}
+    ${s.fold ? "" : `<div class="sbar">
+      <button class="tab ${s.open ? "on" : ""}" data-act="gear" data-key="${s.key}">Targeting &amp; page ▾</button>
+      <button class="tab ${s.copy ? "on" : ""}" data-act="setcopy" data-key="${s.key}">✎ Copy${s.copy ? " · own" : ""}</button>
+      <span class="sp"></span>
+      <div class="chips" data-chips="${s.key}">${chipsHtml(s)}</div>
+    </div>
+`}
+    ${s.open && !s.fold ? `<div class="sopts spanel">
+      ${isNew ? "" : `<label class="full">Ad set<select data-mode="${s.key}">
+        <option value="new" ${s.mode==="new"?"selected":""}>Create a new ad set</option>
+        <option value="existing" ${s.mode==="existing"?"selected":""} ${S.adsetsOfCampaign.length?"":"disabled"}>Add to an existing ad set in this campaign</option></select></label>`}
+      ${s.mode === "existing" ? "" : `
+      <div class="wide"><label>Countries</label>${countryPicker(s)}</div>
+      <label>Age min<select data-age="age_min" data-key="${s.key}">${ageOpts(s.age_min)}</select></label>
+      <label>Age max<select data-age="age_max" data-key="${s.key}">${ageOpts(s.age_max)}</select></label>
+      <label class="wide">Gender<select data-opt="gender" data-key="${s.key}">
+        ${["all","female","male"].map(g => `<option value="${g}" ${s.gender===g?"selected":""}>${g==="all"?"All":g==="female"?"Women":"Men"}</option>`).join("")}</select></label>
+      ${needBudget ? `<label class="wide">Ad set daily budget (${S.cur || "account currency"})<input type="number" min="1" step="1" data-opt="daily_budget" data-key="${s.key}" value="${esc(s.daily_budget)}" placeholder="${esc($("#setBudget").value ? $("#setBudget").value + " (same as setup)" : "required")}"></label>` : ""}`}
+      <label class="wide">Page<select data-opt="page" data-key="${s.key}">
+        <option value="">Same as setup (${esc(($("#page").selectedOptions[0] || {}).textContent || "none picked")})</option>
+        ${S.pages.map(p => `<option value="${p.id}" ${s.page===p.id?"selected":""}>${esc(p.name)}</option>`).join("")}</select></label>
+      <label class="wide">CTA<select data-opt="cta" data-key="${s.key}">
+        <option value="">Same as setup (${esc(($("#cta").selectedOptions[0] || {}).textContent || "")})</option>
+        ${[...$("#cta").options].map(o => `<option value="${o.value}" ${s.cta===o.value?"selected":""}>${o.textContent}</option>`).join("")}</select></label>
+      <label class="full">Website URL for this ad set (blank = same as setup)<input data-opt="link_url" data-key="${s.key}" value="${esc(s.link_url)}" placeholder="${esc($("#url").value.trim() ? "Same as setup: " + $("#url").value.trim() : "Same as setup (no URL yet)")}"></label>
+
+    </div>` : ""}
+    ${s.fold ? "" : `<div class="list" data-drop="${s.key}">${s.items.length ? s.items.map(id => crHtml(id, s.key)).join("") : `<div class="empty">Drag creatives here</div>`}</div>`}
+  </div>`).join("");
+  $("#foldAll").hidden = !S.sets.length;
+  $("#foldAll").textContent = S.sets.length && S.sets.every(s => s.fold) ? "Expand all" : "Collapse all";
+  const nCr = Object.keys(S.cr).length;
+  $("#ungWrap").hidden = nCr > 0 && !S.ung.length;
+  $("#ungN").textContent = S.ung.length; $("#ungN").hidden = !S.ung.length;
+  $("#ung").innerHTML = S.ung.length ? S.ung.map(id => crHtml(id, "")).join("") : `<div class="empty">${Object.keys(S.cr).length ? "All creatives are in ad sets" : "Load a folder or drop files to start"}</div>`;
+  const allUng = S.ung.length && S.ung.every(id => S.sel.has(id));
+  $("#selAll").textContent = allUng ? "Clear selection" : "Select all";
+  $("#selAll").disabled = !S.ung.length;
+  $("#moveTo").innerHTML = `<option value="">${S.sel.size ? `Move ${S.sel.size} selected to…` : "Move selected to…"}</option>` + S.sets.map(s => `<option value="${s.key}">${esc(setLabel(s) || "Unnamed ad set")}</option>`).join("") + `<option value="__ung">Ungrouped</option>`;
+  const total = Object.keys(S.cr).length, placed = S.sets.reduce((n,s) => n + s.items.length, 0);
+  $("#count").textContent = total ? `${placed} of ${total} creatives in ${S.sets.filter(s=>s.items.length).length} ad set(s) · ${S.ung.length} ungrouped` : "No creatives loaded";
+  saveDraft();
+}
+document.addEventListener("change", e => {
+  const t = e.target;
+  if (t.dataset.pick) pickRow(t.dataset.pick, t.checked, S.pickShift);
+  if (t.dataset.mode) { const s = setByKey(t.dataset.mode); s.mode = t.value; if (s.mode==="existing" && !s.id && S.adsetsOfCampaign[0]) s.id = S.adsetsOfCampaign[0].id; render(); }
+  if (t.dataset.opt === "id" || t.dataset.opt === "gender" || t.dataset.opt === "page") { setByKey(t.dataset.key)[t.dataset.opt] = t.value; render(); }
+  if (t.dataset.ctryAdd && t.value) { const s = setByKey(t.dataset.ctryAdd); s.countries = [...ctryList(s), t.value].join(","); render(); }
+  if (t.dataset.age) {
+    // Keep min ≤ max: moving one past the other drags the other along.
+    const s = setByKey(t.dataset.key), v = +t.value; s[t.dataset.age] = v;
+    if (t.dataset.age === "age_min" && +s.age_max < v) s.age_max = v;
+    if (t.dataset.age === "age_max" && +s.age_min > v) s.age_min = v;
+    render();
+  }
+  if (t.id === "moveTo" && t.value) { const ids = [...S.sel]; if (ids.length) moveIds(ids, t.value === "__ung" ? "" : t.value); t.value = ""; }
+});
+function pickRow(id, on, shift) {
+  const rows = [...document.querySelectorAll(".cr")].map(r => r.dataset.id);
+  const from = rows.indexOf(S.lastPick), to = rows.indexOf(id);
+  const ids = shift && from >= 0 ? rows.slice(Math.min(from, to), Math.max(from, to) + 1) : [id];
+  ids.forEach(i => on ? S.sel.add(i) : S.sel.delete(i));
+  S.lastPick = id; render();
+}
+document.addEventListener("click", e => {
+  // A checkbox's change event carries no shift state, so keep it from the click that precedes it.
+  if (e.target.matches?.("[data-pick]")) { S.pickShift = e.shiftKey; return; }
+  const row = e.target.closest?.(".cr");
+  if (!row || e.target.closest("input,button,[data-pv]")) return;
+  pickRow(row.dataset.id, !S.sel.has(row.dataset.id), e.shiftKey);
+});
+// ---------- preview ----------
+// Click a thumbnail (or a file name on the review screen) to see the creative full size. ← → step through every creative in screen order.
+function pvList() { const l = [...document.querySelectorAll(".cr")].map(r => r.dataset.id).filter(i => S.cr[i]); return l.length ? l : Object.keys(S.cr); }
+function openPv(id) {
+  const c = S.cr[id]; if (!c) return;
+  S.pv = id;
+  const list = pvList(), i = list.indexOf(id), src = x => `/api/media?id=${x}&profile=${S.profile}`;
+  $("#pvName").textContent = c.alt ? c.name + " + " + c.alt.name : c.name;
+  $("#pvCount").textContent = i >= 0 ? `${i + 1} of ${list.length}` : "";
+  $("#pvPrev").disabled = i <= 0; $("#pvNext").disabled = i < 0 || i >= list.length - 1;
+  $("#pvStage").innerHTML = c.kind === "video"
+    ? `<video src="${src(id)}" controls autoplay loop playsinline></video>`
+    : c.alt ? `<figure class="cap"><img src="${src(id)}"><figcaption>Feeds</figcaption></figure><figure class="cap"><img src="${src(c.alt.id)}"><figcaption>Stories and Reels</figcaption></figure>`
+    : `<img src="${src(id)}">`;
+  if (!$("#pvDlg").open) $("#pvDlg").showModal();
+}
+function pvStep(d) { const l = pvList(), n = l[l.indexOf(S.pv) + d]; if (n && l.includes(S.pv)) openPv(n); }
+$("#pvPrev").onclick = () => pvStep(-1);
+$("#pvNext").onclick = () => pvStep(1);
+$("#pvClose").onclick = () => $("#pvDlg").close();
+$("#pvDlg").addEventListener("close", () => { $("#pvStage").innerHTML = ""; });   // stops the video
+$("#pvDlg").addEventListener("click", e => { if (e.target === e.currentTarget || e.target.id === "pvStage") $("#pvDlg").close(); });
+$("#pvDlg").addEventListener("keydown", e => {
+  if (e.key === "ArrowLeft" || e.key === "ArrowRight") { e.preventDefault(); pvStep(e.key === "ArrowLeft" ? -1 : 1); }
+});
+document.addEventListener("click", e => { const t = e.target.closest?.("[data-pv]"); if (t) openPv(t.dataset.pv); });
+$("#selAll").onclick = () => {
+  const all = S.ung.every(id => S.sel.has(id));
+  S.ung.forEach(id => all ? S.sel.delete(id) : S.sel.add(id));
+  render();
+};
+// drag creatives between ad sets
+document.addEventListener("dragstart", e => {
+  const row = e.target.closest?.(".cr"); if (!row) return;
+  const id = row.dataset.id; S.drag = S.sel.has(id) ? [...S.sel] : [id];
+  e.dataTransfer.setData("text/plain", id); e.dataTransfer.effectAllowed = "move";
+});
+document.addEventListener("dragover", e => { const l = e.target.closest?.("[data-drop]"); if (l && S.drag.length) { e.preventDefault(); l.classList.add("over"); } });
+document.addEventListener("dragleave", e => { const l = e.target.closest?.("[data-drop]"); if (l) l.classList.remove("over"); });
+document.addEventListener("drop", e => {
+  const l = e.target.closest?.("[data-drop]"); if (!l || !S.drag.length) return;
+  e.preventDefault(); const ids = S.drag; S.drag = []; moveIds(ids, l.dataset.drop);
+});
+document.addEventListener("dragend", () => { S.drag = []; document.querySelectorAll(".over").forEach(x => x.classList.remove("over")); });
+
+// ---------- per-creative copy ----------
+function openEdit(id) {
+  const c = S.cr[id], s = S.sets.find(x => x.items.includes(id)), from = c.copy || setCopy(s);
+  S.editing = id; S.editingSet = null;
+  S.edit = {p:[...from.p], h:[...from.h], d:from.d};
+  $("#cTitle").textContent = "Copy for " + c.name;
+  $("#cHint").textContent = "Applies to this one ad only.";
+  $("#cReset").textContent = s && s.copy ? "Reset to ad set copy" : "Reset to main copy";
+  $("#cReset").title = "Removes this ad's custom copy";
+  renderEdit(); $("#copyDlg").showModal();
+}
+function openSetEdit(key) {
+  const s = setByKey(key), from = setCopy(s);
+  S.editing = null; S.editingSet = key;
+  S.edit = {p:[...from.p], h:[...from.h], d:from.d};
+  const name = s.mode === "existing" ? (S.adsetsOfCampaign.find(a => a.id === s.id) || {}).name : s.name;
+  $("#cTitle").textContent = "Copy for ad set " + (name || "");
+  $("#cHint").textContent = "Applies to every ad in this ad set. Anything you leave unchanged keeps following the main Copy section. Ads with their own copy (✎ on the ad) keep it.";
+  $("#cReset").textContent = "Reset to main copy";
+  $("#cReset").title = "Removes this ad set's custom copy";
+  renderEdit(); $("#copyDlg").showModal();
+}
+function saveSetCopy(s, e) {
+  const clean = l => JSON.stringify(l.map(x => x.trim()).filter(Boolean));
+  const diff = {};
+  if (clean(e.p) !== clean(S.copy.p)) diff.p = e.p;
+  if (clean(e.h) !== clean(S.copy.h)) diff.h = e.h;
+  if (e.d.trim() !== S.copy.d.trim()) diff.d = e.d;
+  s.copy = Object.keys(diff).length ? diff : null;
+}
+function renderEdit() {
+  for (const k of ["p","h"]) {
+    const list = S.edit[k];
+    $(`#c${k}List`).innerHTML = list.map((t,i) => lineHtml(k, t, i, "edit")).join("");
+    document.querySelector(`[data-cadd="${k}"]`).disabled = list.length >= MAX;
+  }
+  $("#cDesc").value = S.edit.d;
+}
+$("#cDesc").oninput = e => S.edit.d = e.target.value;
+$("#cCancel").onclick = () => $("#copyDlg").close();
+$("#cLib").onclick = () => openLib("edit");
+$("#cSave").onclick = () => {
+  if (S.editingSet) saveSetCopy(setByKey(S.editingSet), S.edit); else S.cr[S.editing].copy = S.edit;
+  $("#copyDlg").close(); render();
+};
+$("#cReset").onclick = () => {
+  if (S.editingSet) setByKey(S.editingSet).copy = null; else S.cr[S.editing].copy = null;
+  $("#copyDlg").close(); render();
+};
+$("#cAll").onclick = async () => {
+  if (!await ask("Use this copy for every ad in the launch?", "This replaces the main Copy section and removes all custom copy on ad sets and individual ads.", {yes:"Use for every ad"})) return;
+  S.copy = {p:[...S.edit.p], h:[...S.edit.h], d:S.edit.d}; Object.values(S.cr).forEach(c => c.copy = null); S.sets.forEach(s => s.copy = null);
+  $("#copyDlg").close(); renderCopy(); render();
+};
+
+// ---------- review & launch ----------
+function payload() {
+  const isNew = $("#campaign").value === "__new";
+  const order = launchOrder();
+  const asApi = c => ({primary_texts:c.p, headlines:c.h, description:c.d});
+  return {profile:S.profile, batch_name:batchName(), skip_links:$("#skipLinks").checked,
+    campaign: isNew ? {mode:"new", name:$("#campName").value, type:$("#campType").value, budget:$("#campBudget").value}
+                    : {mode:"existing", id:$("#campaign").value, abo:isAbo()},
+    page:$("#page").value, link_url:$("#url").value, url_tags:$("#tags").value, cta:$("#cta").value, start_time:startValue(),
+    copy:{primary_texts:S.copy.p, headlines:S.copy.h, description:S.copy.d},
+    adsets: S.sets.map(s => ({mode:s.mode, id:s.id, name:s.name, countries:ctryList(s).join(","), age_min:s.age_min, age_max:s.age_max,
+      gender:s.gender, page:s.page, cta:s.cta, link_url:s.link_url, daily_budget:isAbo() ? setBudgetOf(s) : "",
+      copy: s.copy ? asApi(setCopy(s)) : null,
+      creatives: s.items.map(id => { const c = S.cr[id]; return {id, name:c.name, alt: c.alt ? c.alt.id : "",
+        ad_name: adName(id, s.key),
+        copy: c.copy ? {primary_texts:c.copy.p, headlines:c.copy.h, description:c.copy.d} : null}; })}))};
+}
+S.mode = "PAUSED";
+function setMode(m) {
+  S.mode = m;
+  document.querySelectorAll("#modeWrap button").forEach(b => b.classList.toggle("on", b.dataset.mode === m));
+  const b = $("#dLaunch");
+  b.textContent = m === "ACTIVE" ? "Launch ACTIVE (starts spending)" : "Launch (PAUSED)";
+  b.classList.toggle("danger", m === "ACTIVE"); b.classList.toggle("primary", m !== "ACTIVE");
+  if (S.report) renderReport(S.report, S.reviewOk);
+}
+document.querySelectorAll("#modeWrap button").forEach(b => b.onclick = () => setMode(b.dataset.mode));
+function renderReport(r, ok) {
+  const rows = r.rows || [], todo = rows.filter(x => !x.skipped), sets = [...new Set(todo.map(x => x.ad_set))];
+  const c = camp(), isNew = $("#campaign").value === "__new", campName = c ? c.name : ($("#campName").value || "New campaign");
+  const campPaused = isNew || (c && c.status !== "ACTIVE"), errs = r.errors || [];
+  const chk = (r.warnings || []).filter(w => w.level === "check"), fyi = (r.warnings || []).filter(w => w.level !== "check");
+  const live = S.mode === "ACTIVE";
+  const what = `${todo.length} ad${todo.length === 1 ? "" : "s"} in ${sets.length} ad set${sets.length === 1 ? "" : "s"}`;
+  let h = !ok || errs.length
+    ? `<div class="rbanner bad"><span>⛔</span><div><b>Fix ${errs.length || "the"} problem${errs.length === 1 ? "" : "s"} below before launching</b><small>Nothing was sent to Meta.</small></div></div>`
+    : !todo.length
+    ? `<div class="rbanner ok"><span>✓</span><div><b>Everything in this batch was already launched</b><small>There is nothing new to create.</small></div></div>`
+    : live
+    ? `<div class="rbanner live"><span>●</span><div><b>Ready to launch ${what} ACTIVE</b><small>${campPaused
+        ? `The campaign ${esc(campName)} ${isNew ? "will be created paused" : "is paused"}, so nothing spends until you turn the campaign on in Ads Manager.`
+        : `They can start spending as soon as Meta approves them.`}</small></div></div>`
+    : `<div class="rbanner ok"><span>✓</span><div><b>Ready to launch ${what}, paused</b><small>Nothing spends until you switch them on in Ads Manager.${chk.length ? " Glance at the notes below first." : ""}</small></div></div>`;
+  if (errs.length) h += `<div class="rnote err"><h4>Must fix: blocks the launch</h4><ul>${errs.map(e => `<li>${esc(e)}</li>`).join("")}</ul></div>`;
+  if (chk.length) h += `<div class="rnote chk"><h4>Worth a look: won't stop the launch</h4><ul>${chk.map(w => `<li>${esc(w.text)}</li>`).join("")}</ul></div>`;
+  if (fyi.length) h += `<div class="rnote fyi"><h4>FYI: fine to launch</h4><ul>${fyi.map(w => `<li>${esc(w.text)}</li>`).join("")}</ul></div>`;
+  const descs = [...new Set(todo.map(x => x.description).filter(Boolean))];
+  h += `<div class="rfacts"><span class="chip">${esc(campName)}</span><span class="chip">${esc((rows[0] || {}).page || "")}</span>`
+     + (r.links || []).map(l => `<span class="chip" title="${esc(l)}">${esc(l.replace(/^https?:\/\//, "").slice(0, 48))}</span>`).join("")
+     + `<span class="chip">${esc((rows[0] || {}).cta || "")}</span>`
+     + (descs.length ? descs.map(d => `<span class="chip">Description: ${esc(d)}</span>`).join("") : `<span class="chip">No description</span>`) + `</div>`;
+  if (rows.length) {
+    let body = "", last = null;
+    rows.forEach(x => {
+      if (x.ad_set !== last) { last = x.ad_set; body += `<tr class="grp"><td colspan="5">${esc(x.ad_set)} <span class="chip">${x.new_ad_set ? "new ad set" : "existing ad set"}</span></td></tr>`; }
+      body += `<tr class="${x.skipped ? "skip" : ""}" title="${x.skipped ? "Already launched earlier: skipped" : ""}"><td>${esc(x.ad_name)}</td><td>${(pid => pid ? `<span class="pvlink" data-pv="${pid}" title="Click to preview">${esc(x.media)}</span>` : esc(x.media))(Object.keys(S.cr).find(i => S.cr[i].name === x.media) || "")}${x.media_9x16 ? `<br>${esc(x.media_9x16)} <span class="chip b">1:1 + 9:16</span>` : ""}</td>
+        <td class="hook" title="${esc(x.hook)}">${x.primary_texts > 1 ? `<span class="chip">${x.primary_texts} texts</span> ` : ""}${esc(x.hook.split("\n")[0])}</td>
+        <td>${x.headlines > 1 ? `<span class="chip">${x.headlines}</span> ` : ""}${esc(x.headline)}</td><td>${esc(x.cta)}</td></tr>`;
+    });
+    h += `<div class="rscroll"><table class="rtable"><tr><th>Ad name</th><th>Media</th><th>Primary text</th><th>Headline</th><th>CTA</th></tr>${body}</table></div>`;
+  }
+  h += `<p class="hint"><a href="#" id="rawToggle">Show the launcher's full output</a></p>`;
+  $("#dRep").innerHTML = h; $("#dRep").hidden = false;
+  $("#dOut").hidden = true;
+  $("#rawToggle").onclick = e => { e.preventDefault(); $("#dOut").hidden = !$("#dOut").hidden; e.target.textContent = $("#dOut").hidden ? "Show the launcher's full output" : "Hide the full output"; };
+}
+async function reviewBatch() {
+  $("#dTitle").textContent = "Review"; $("#steps").hidden = true; $("#dResult").hidden = true;
+  $("#live").hidden = $("#liveWarn").hidden = $("#dLogToggle").hidden = true;
+  $("#dAds").hidden = $("#dNew").hidden = true; $("#dLaunch").hidden = false; $("#skipWrap").hidden = false; $("#modeWrap").hidden = false;
+  S.report = null; $("#dRep").hidden = true; $("#dOut").hidden = false;
+  $("#dOut").hidden = true;
+  $("#dLaunch").disabled = true; $("#dRecheck").disabled = true;
+  setMode("PAUSED");   // every review starts paused, so a launch never goes live by accident
+  if (!$("#dlg").open) $("#dlg").showModal();
+  // Forgot the copy? Stop here with a plain message instead of one buried line per ad
+  const filled = l => (l || []).some(x => x.trim());
+  const ads = S.sets.flatMap(s => s.items.map(id => S.cr[id] && (S.cr[id].copy || setCopy(s))).filter(Boolean));
+  const noP = ads.filter(c => !filled(c.p)).length, noH = ads.filter(c => !filled(c.h)).length;
+  if (noP || noH) {
+    const what = noP && noH ? "primary text or headlines" : noP ? "primary text" : "headlines";
+    const n = Math.max(noP, noH), all = n === ads.length;
+    $("#dTitle").textContent = "Review: copy missing";
+    $("#dRep").innerHTML = `<div class="rbanner bad"><span>⛔</span><div><b>No ${what} ${all ? "filled in" : `on ${n} of ${ads.length} ads`}</b><small>Every ad needs at least one primary text and one headline. Nothing was sent to Meta.</small></div></div>
+      <p style="margin-top:14px"><button class="primary" id="goCopy">Go to Copy</button></p>`;
+    $("#dRep").hidden = false;
+    $("#goCopy").onclick = () => { $("#dlg").close(); sideTab("copy"); };
+    $("#dRecheck").disabled = false;
+    return;
+  }
+  const stopCheck = showChecking();
+  try {
+    const r = await api("/api/build", {method:"POST", json:payload()}).finally(stopCheck);
+    $("#dOut").hidden = !!r.report;
+    S.csv = r.csv || null; $("#dOut").textContent = r.output; S.reviewOk = r.ok;
+    $("#dLaunch").disabled = !r.ok;
+    $("#dTitle").textContent = r.ok ? `Review: ${r.csv}` : "Review: fix the problems below";
+    if (r.report) { S.report = r.report; renderReport(r.report, r.ok); }
+  } catch (e) { $("#dOut").hidden = false; $("#dOut").textContent = "🛑 " + e.message; }
+  $("#dRecheck").disabled = false;
+}
+// While Review runs: a moving bar, a checklist that ticks as the launcher reports each step, and the elapsed time.
+function showChecking() {
+  const skip = $("#skipLinks").checked;
+  const steps = [["Saving the batch", null],
+                 [skip ? "Checking the files" : "Checking the files and landing pages", /Checking the files/],
+                 ["Checking the campaign, ad sets and Page with Meta", /with Meta/],
+                 ["Building the preview", /^Would create|problem\(s\)/]];
+  const t0 = Date.now(); let reached = 0, alive = true;
+  const draw = () => {
+    $("#chkList").innerHTML = steps.map(([label], i) => `<li class="${i < reached ? "ok" : i === reached ? "now" : ""}">${esc(label)}</li>`).join("");
+    $("#liveNow").textContent = steps[reached][0] + "…";
+    $("#liveTime").textContent = `Elapsed ${clock((Date.now() - t0) / 1000)} · nothing is sent to Meta yet`;
+  };
+  $("#dTitle").textContent = "Checking your launch…";
+  $("#checking").hidden = false; $("#live").hidden = false; $("#liveDot").className = "dot";
+  draw();
+  const poll = async () => {
+    if (!alive) return;
+    try {
+      const d = await api("/api/dry-progress");
+      steps.forEach(([, re], i) => { if (re && d.lines.some(l => re.test(l))) reached = Math.max(reached, i); });
+    } catch {}
+    if (alive) { draw(); setTimeout(poll, 600); }
+  };
+  const clockTimer = setInterval(() => alive && draw(), 1000);
+  setTimeout(poll, 300);
+  return () => { alive = false; clearInterval(clockTimer); $("#checking").hidden = true; $("#live").hidden = true; };
+}
+$("#review").onclick = reviewBatch;
+$("#dRecheck").onclick = reviewBatch;
+$("#dClose").onclick = () => $("#dlg").close();
+const STAGE_TEXT = {Checking:"Checking everything before sending it to Meta", Media:"Uploading media", Creatives:"Building the creatives on Meta",
+                    Campaigns:"Creating the campaign", "Ad sets":"Creating the ad sets", Ads:"Creating the ads"};
+// The launch screen's steps: [title, what the step does]
+const STAGE_UI = {Checking:["Final check", "Files, landing page, campaign and Page"], Media:["Upload media", "Send your videos and images to Meta"],
+                  Creatives:["Build the creatives", "Pair each video or image with its copy"], Campaigns:["Create the campaign", "Created paused"],
+                  "Ad sets":["Create the ad sets", "Targeting, budget and start time"], Ads:["Create the ads", "Put each creative into its ad set"]};
+const clock = s => `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, "0")}`;
+const plural = (n, w) => `${n} ${w}${n === 1 ? "" : "s"}`;
+function readLine(line, P) {
+  const stage = line.match(/^\s*\d+\/\d+ (Media|Creatives|Campaigns|Ad sets|Ads)\s*$/);
+  if (stage) { P.stage = stage[1]; P.doing = STAGE_TEXT[P.stage]; P.sent = null; return; }
+  // uploads run side by side, so two "uploading" notes can land on one line
+  const ups = [...line.matchAll(/\[\d+\/(\d+)\] uploading (.+?)(?=\s+\[\d+\/\d+\] |\s*$)/g)];
+  if (ups.length) { ups.forEach(u => { P.mediaTotal = +u[1]; P.files.set(u[2], "up"); }); P.doing = "Uploading your files to Meta"; return; }
+  const had = line.match(/\[\d+\/(\d+)\] (.+) — already uploaded/);
+  if (had) { P.mediaTotal = +had[1]; P.mediaDone++; P.files.set(had[2], "reused"); return; }
+  const upd = line.match(/✓ (.+) uploaded$/);
+  if (upd) { P.mediaDone++; P.files.set(upd[1], "uploaded"); return; }
+  const proc = line.match(/waiting for Meta to process (\d+) video/);
+  if (proc) { P.procTotal = +proc[1]; P.doing = "Uploaded. Meta is now processing the videos"; return; }
+  const pr = line.match(/✓ (.+) processed$/);
+  if (pr) { P.procDone++; P.files.set(pr[1], "ready"); return; }
+  const sent = line.match(/✓ (\d+)\/(\d+) sent to Meta/);
+  if (sent) { P.sent = P.counts[P.stage] = [+sent[1], +sent[2]]; P.doing = `Meta has confirmed ${sent[1]} of ${sent[2]}`; return; }
+  const wait = line.match(/⏳ (.+)$/);
+  if (wait) P.doing = wait[1];
+}
+// How far the current stage is, as [done, total]; null while Meta hasn't reported anything countable.
+function stageCount(P) {
+  if (P.stage === "Media") return P.procTotal ? [P.procDone, P.procTotal] : P.mediaTotal ? [P.mediaDone, P.mediaTotal] : null;
+  return P.sent;
+}
+function fileState(name, st) {
+  if (st === "ready") return ["ok", "Ready ✓"];
+  if (st === "reused") return ["ok", "Already on Meta ✓"];
+  if (st === "uploaded") return /\.(mp4|mov|m4v|webm|avi|mkv)$/i.test(name) ? ["wait", "Meta is processing…"] : ["ok", "Uploaded ✓"];
+  return ["up", "Uploading…"];
+}
+// One row per step: a tick when done, a spinner on the current one, a cross where it stopped
+function drawProgress(P, stages, done, ok) {
+  const idx = stages.indexOf(P.stage), count = stageCount(P);
+  document.querySelectorAll("#steps .tl-row").forEach((el, i) => {
+    const s = stages[i], state = (done && ok) || i < idx ? "complete" : i === idx ? (done ? "fail" : "now") : "";
+    if (el.className !== "tl-row " + state) el.className = "tl-row " + state;
+    el.querySelector(".tl-ic span").textContent = state === "complete" ? "✓" : state === "fail" ? "✕" : state === "now" ? "" : i + 1;
+    const c = P.counts[s];
+    el.querySelector(".tl-d").textContent = state === "now" ? (P.lost ? "Can't reach the launcher app, retrying…" : P.doing)
+      : state === "fail" ? "Stopped here"
+      : state === "complete" ? (s === "Media" ? (P.files.size ? `${plural(P.files.size, "file")} on Meta` : "Done") : c ? `${c[1]} done` : "Done")
+      : STAGE_UI[s][1];
+    el.querySelector(".tl-n").textContent = state === "now" && count ? `${count[0]} of ${count[1]}` : "";
+    const bar = el.querySelector(".tl-bar"); bar.hidden = state !== "now";
+    if (bar.className !== "tl-bar" + (count ? "" : " wait")) bar.className = "tl-bar" + (count ? "" : " wait");
+    bar.firstElementChild.style.width = (count ? Math.max(100 * count[0] / Math.max(count[1], 1), 4) : 100) + "%";
+    const fl = el.querySelector(".tl-files");
+    if (fl) {
+      const h = [...P.files].map(([n, st]) => { const [cls, label] = fileState(n, st); return `<div class="tl-file"><span title="${esc(n)}">${esc(n)}</span><em class="${cls}">${label}</em></div>`; }).join("");
+      if (fl._h !== h) { fl.innerHTML = h; fl._h = h; }
+      fl.hidden = !h || (state !== "now" && state !== "fail");
+    }
+  });
+  if (!done) $("#liveNow").textContent = P.lost ? "Can't reach the launcher app, retrying…" : "Launching. Keep this window open";
+}
+function drawClock(P) {
+  const now = Date.now(), quiet = (now - P.lastLine) / 1000, slowAt = P.procTotal ? 900 : 300;
+  $("#liveTime").textContent = `Elapsed ${clock((now - P.startedAt) / 1000)} · last update ${quiet < 60 ? Math.floor(quiet) + "s" : clock(quiet)} ago`;
+  $("#liveDot").className = "dot" + (P.lost ? " off" : quiet >= 60 ? " quiet" : "");
+  const w = $("#liveWarn");
+  w.hidden = P.lost || quiet < 60;
+  w.textContent = quiet >= slowAt
+    ? `That's a long wait with no news from Meta (${clock(quiet)}). The launcher is still running. If it stays like this you can quit and launch this batch again later: finished ads are skipped.`
+    : `No news for ${clock(quiet)}. The launcher is still running and waiting for Meta's reply, so leave this open.`;
+}
+// The raw launcher output stays out of the way unless "Show full log" is on
+function drawLog(log) {
+  const o = $("#dOut"); o.hidden = !S.fullLog;
+  if (!S.fullLog) return;
+  const atEnd = o.scrollHeight - o.scrollTop - o.clientHeight < 40;
+  o.textContent = log.length ? log.join("\n") : "Nothing yet…";
+  if (atEnd) o.scrollTop = o.scrollHeight;
+}
+// The plain-language reasons a launch stopped or an ad failed, pulled out of the launcher's output
+function launchProblems(log) {
+  const out = [];
+  log.forEach((l, i) => {
+    if (l.includes("🛑")) { out.push(l.replace(/🛑\s*/, "").trim()); if (/:\s*$/.test(l)) for (let k = i + 1; k < log.length && log[k].trim(); k++) out.push(log[k].trim()); }
+    else if (/^\s+(row \d+|\d+ rows \()/.test(l)) out.push(l.trim());
+  });
+  return [...new Set(out)];
+}
+const problemsHtml = list => list.length ? `<div class="rnote err"><h4>What went wrong</h4><ul>${list.map(x => `<li>${esc(x)}</li>`).join("")}</ul></div>`
+  : `<p class="hint">Press "Show full log" below for the details.</p>`;
+function finishCard(kind, title, sub, extra) {
+  $("#dResult").innerHTML = `<div class="fin ${kind}"><div class="fin-ic">${kind === "ok" ? "✓" : kind === "warn" ? "!" : "✕"}</div><div><b>${esc(title)}</b><small>${esc(sub)}</small></div></div>` + (extra || "");
+  $("#dResult").hidden = false;
+}
+$("#dLaunch").onclick = async () => {
+  if (!S.csv) return;
+  const active = S.mode === "ACTIVE", n = S.report ? S.report.rows.filter(x => !x.skipped).length : 0;
+  if (active && !await ask(`Launch ${n || "these"} ads ACTIVE?`, `They can start spending as soon as Meta approves them${(camp() && camp().status === "ACTIVE") ? "." : " (once the campaign is switched on)."}`, {yes:"Launch ACTIVE", danger:true})) return;
+  $("#modeWrap").hidden = true; $("#dRep").hidden = true; $("#dOut").hidden = true;
+  const skipLinks = $("#skipLinks").checked, stages = ["Checking", "Media", "Creatives", ...($("#campaign").value === "__new" ? ["Campaigns"] : []), "Ad sets", "Ads"];
+  $("#dLaunch").hidden = true; $("#skipWrap").hidden = true; $("#dRecheck").disabled = true; $("#dClose").disabled = true;
+  $("#dResult").hidden = true; $("#dOut").textContent = "";
+  $("#steps").hidden = false; $("#steps").innerHTML = stages.map((s, i) => `<div class="tl-row"><div class="tl-ic"><span>${i + 1}</span></div><div class="tl-main"><div class="tl-t">${STAGE_UI[s][0]}</div><div class="tl-d"></div><div class="tl-bar" hidden><i></i></div>${s === "Media" ? `<div class="tl-files" hidden></div>` : ""}</div><div class="tl-n"></div></div>`).join("");
+  $("#dTitle").textContent = `Launching ${n ? plural(n, "ad") : "your ads"} (${active ? "Active" : "Paused"})`;
+  const P = {stage:"Checking", doing:STAGE_TEXT.Checking, mediaDone:0, mediaTotal:0, procDone:0, procTotal:0, sent:null, counts:{}, files:new Map(), lost:false, startedAt:Date.now(), lastLine:Date.now()};
+  const log = []; S.fullLog = false;
+  const toggle = $("#dLogToggle"); toggle.hidden = false; toggle.textContent = "Show full log";
+  toggle.onclick = () => { S.fullLog = !S.fullLog; toggle.textContent = S.fullLog ? "Hide full log" : "Show full log"; drawLog(log); };
+  $("#live").hidden = false;
+  drawProgress(P, stages, false); drawClock(P); drawLog(log);
+  const timer = setInterval(() => drawClock(P), 1000);
+  const stop = () => { clearInterval(timer); $("#dClose").disabled = false; $("#dRecheck").disabled = false; $("#liveWarn").hidden = true; };
+  let job;
+  try { job = (await api("/api/launch", {method:"POST", json:{csv:S.csv, profile:S.profile, skip_links:skipLinks, active, product:product()}})).job; }
+  catch (e) { stop(); $("#live").hidden = true; toggle.hidden = true; $("#steps").hidden = true; $("#dTitle").textContent = "Couldn't start"; $("#dOut").hidden = false; $("#dOut").textContent = "🛑 " + e.message; return; }
+  let since = 0, misses = 0;
+  const tick = async () => {
+    let j;
+    try { j = await api(`/api/job?id=${job}&since=${since}`); misses = 0; P.lost = false; }
+    catch {
+      P.lost = true; drawProgress(P, stages, false); drawClock(P);
+      if (++misses >= 5) $("#dClose").disabled = false;
+      return setTimeout(tick, 2000);
+    }
+    since += j.lines.length;
+    if (j.lines.length) { P.lastLine = Date.now(); log.push(...j.lines); j.lines.forEach(l => readLine(l, P)); }
+    if (!j.done) { drawProgress(P, stages, false); drawLog(log); return setTimeout(tick, 1000); }
+    stop();
+    const all = log.join("\n"), sum = (log.find(l => /created \((PAUSED|ACTIVE)\)/.test(l)) || "").trim(), took = clock((Date.now() - P.startedAt) / 1000);
+    const [made, failed, skipped] = [/(\d+) created/, /(\d+) failed/, /(\d+) skipped/].map(r => +((sum.match(r) || [])[1] || 0));
+    const problems = launchProblems(log), ok = j.code === 0 && made + skipped > 0;
+    drawProgress(P, stages, true, ok); drawLog(log);
+    $("#live").hidden = true;
+    if (ok) return launched(all, {made, failed, skipped, problems, took}, active);
+    // stopped: the steps stay up with a cross where it stopped, and the batch stays open to fix and retry
+    $("#dTitle").textContent = "Launch stopped";
+    finishCard("bad", made ? `The launch stopped after ${plural(made, "ad")}` : "The launch stopped before any ads were created",
+      "Fix the problem below, then press Re-check. Anything already created is skipped next time, so nothing is doubled.", problemsHtml(problems));
+  };
+  tick();
+};
+
+// ---------- after a successful launch ----------
+function launched(log, r, active) {
+  const acct = (log.match(/act=(\d+)/) || [])[1];
+  const campId = (log.match(/created \((\d{6,})\)/) || [])[1] || (camp() || {}).id;
+  const name = camp() ? camp().name : $("#campName").value;
+  const url = acct ? `https://adsmanager.facebook.com/adsmanager/manage/ads?act=${acct}` + (campId ? `&selected_campaign_ids=${campId}` : "") : "";
+  const {made, failed, skipped} = r, total = made + skipped;
+  const plain = `${total} ads launched (${active ? "ACTIVE" : "paused"})` + (failed ? `, ${failed} failed` : "") + ` to ${name}`;
+  const next = active ? ((camp() && camp().status === "ACTIVE") ? "They'll start once Meta approves them." : "Turn the campaign on in Ads Manager for them to spend.") : "They're paused. Turn them on in Ads Manager when you're ready.";
+  const start = startValue() ? new Date(startValue()).toLocaleString([], {weekday:"short", month:"short", day:"numeric", hour:"numeric", minute:"2-digit"}) : "";
+  const tile = (big, small, cls) => `<div class="tile ${cls || ""}"><b>${esc(big)}</b><span>${esc(small)}</span></div>`;
+  let extra = `<div class="tiles">${tile(made, made === 1 ? "ad created" : "ads created")}${tile(failed, "failed", failed ? "red" : "")}${skipped ? tile(skipped, "already launched before") : ""}${tile(active ? "Active" : "Paused", "status")}${start ? tile(start, "start time (Toronto)") : ""}${tile(r.took, "time taken")}</div>`;
+  if (failed) extra += problemsHtml(r.problems);
+  else if (S.report) {   // every ad went through, so list them by ad set
+    const by = {}; S.report.rows.filter(x => !x.skipped).forEach(x => (by[x.ad_set] = by[x.ad_set] || []).push(x.ad_name));
+    extra += `<div class="fin-list">${Object.entries(by).map(([set, ads]) => `<h4>${esc(set)} <span class="chip">${plural(ads.length, "ad")}</span></h4><ul>${ads.map(a => `<li>${esc(a)}</li>`).join("")}</ul>`).join("")}</div>`;
+  }
+  $("#dTitle").textContent = "Launched"; $("#steps").hidden = true;
+  finishCard(failed ? "warn" : "ok", failed ? `${made} of ${made + failed} ads launched` : `${plural(total, "ad")} launched`, `To ${name}. ${next}`, extra);
+  $("#skipWrap").hidden = true;
+  for (const id of ["#dAds", "#doneAds"]) { $(id).href = url; $(id).hidden = !url; }
+  $("#dNew").hidden = false; $("#dLaunch").hidden = true; $("#dRecheck").disabled = true;
+  $("#doneText").textContent = `✓ ${plain}`;
+  $("#doneBar").hidden = false;
+  $("#review").disabled = true;   // this batch is done; start a new launch for the next one
+  api("/api/copy-library-list").then(l => { S.lib = l; }).catch(() => {});   // the launch just filed its copy as Testing
+  S.ready = false; clearDraft();  // a refresh after launching starts fresh instead of reloading the launched batch
+}
+
+function newLaunch() {
+  $("#dlg").open && $("#dlg").close();
+  $("#doneBar").hidden = true; $("#review").disabled = false;
+  Object.assign(S, {cr:{}, ung:[], sets:[], sel:new Set(), csv:null, nextKey:1, copy:{p:[""], h:[""], d:""}, drag:[]});
+  $("#folder").value = ""; $("#folderLoaded").value = ""; showFolder("");
+  $("#campName").value = ""; $("#campBudget").value = ""; S.ready = true;
+  $("#startDate").value = ""; $("#startTime").value = ""; startHint();
+  renderCopy(); render();
+  init().then(() => { $("#campaign").value = "__new"; onCampaign(); });   // reloads campaigns so the new one is listed
+  window.scrollTo({top: 0, behavior: "smooth"});
+}
+$("#dNew").onclick = newLaunch;
+$("#doneNew").onclick = newLaunch;
+
+renderCopy(); render(); init();
+</script>
+</body>
+</html>

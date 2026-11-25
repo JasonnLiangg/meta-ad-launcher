@@ -1,0 +1,20 @@
+# Your token and account IDs. Never commit these.
+.env
+.env.*
+!.env.example
+
+# Your own launches, copy and caches
+batches/*
+!batches/.gitkeep
+copy_library.json
+handoff.json
+.media_cache.json
+.link_ok.json
+.thumbs/
+*.results.csv
+*.check.json
+*.tmp
+
+.venv/
+__pycache__/
+.DS_Store

@@ -1,0 +1,2 @@
+ad_set_name,campaign_name,daily_budget,countries,ad_name,media_path,primary_text,headline,link_url,cta
+LAUNCHER TEST AD SET (delete me),LAUNCHER TEST (delete me),10,US,LAUNCHER-TEST-DELETE-ME,sample.png,Launcher test ad. Paused. Safe to delete.,Launcher test,https://example.com/,LEARN_MORE
